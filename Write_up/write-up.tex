@@ -1,4 +1,4 @@
-\documentclass[a4paper,11pt]{article}
+\documentclass[a4paper,9pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[paper=a4paper]{geometry}
 \usepackage[numbers]{natbib}
@@ -9,7 +9,7 @@
     filecolor=magenta,
     urlcolor=cyan,
     }
-
+\usepackage{multicol}
 
 %opening
 \title{\textbf{Simulating Fluid Motion using Smoothed Particle Hydrodynamics}}
@@ -29,17 +29,26 @@
 \tableofcontents
 \newpage
 
+\begin{multicols}{2}
 \section{Introduction}
 \subsection{Motivation}
-
+The field of simulation is one with many applications in all industries, with much overlap between Mathematics, Physics and Computer Science due to its predictable behaviour. One such application is Computational Fluid Dynamics (CFD), or in other words predicting the movement of fluids, which will be the focus for this project.
+\\~\\
+\indent Simulating fluids involves observation of fluid phenomena such as wind, weather, ocean waves, waves induced by ships or simply pouring a glass of water. Such phenomena may seem extremely trivial at first glance, but in reality involve an extremely deep understanding of physical, mathematical and algorithmic methods, far beyond the A level specification for any related subjects.
 \subsection{Smoothed Particle Hydrodynamics}
-\subsection{Outline and Structure}
-\subsection{Skills and Intentions}
 
+\subsection{Outline and Structure}
+%Incompressible non-gasseous fluid
+\subsection{Skills and Intentions}
+%Explore a topic not taught at A levels, beyond comfort zone, etc, etc
+%Learn a new programming langauge
+%Learn to typeset in LaTeX, write an official paper.
+%Useful at university
 \section{Literature Review}
 \section{Theoretical model}
 \section{Development and Testing}
 \section{Conclusion and Final Remarks}
+\end{multicols}
 
 \newpage
 \bibliographystyle{IEEEtranN}
