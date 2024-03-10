@@ -1,6 +1,7 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023 - Flatpak) (preloaded format=pdflatex 2024.1.11)  7 MAR 2024 14:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023 - Flatpak) (preloaded format=latex 2024.1.11)  7 MAR 2024 16:40
 entering extended mode
  restricted \write18 enabled.
+ Source specials enabled.
  %&-line parsing enabled.
 **write-up
 (./write-up
@@ -8,8 +9,8 @@ LaTeX2e <2022-11-01> patch level 1
 L3 programming layer <2023-02-22>
 (/app/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
-(/app/texlive/texmf-dist/tex/latex/base/size10.clo
-File: size10.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
+(/app/texlive/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count185
 \c@section=\count186
@@ -28,10 +29,15 @@ Package: inputenc 2021/02/14 v1.3d Input encoding file
 \inpenc@prehook=\toks16
 \inpenc@posthook=\toks17
 )
-(/app/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
-File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count193
+(/app/texlive/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
+File: l3backend-dvips.def 2023-01-16 L3 backend support: dvips
 \l__pdf_internal_box=\box51
+\g__pdf_backend_object_int=\count193
+\l__pdf_backend_content_box=\box52
+\l__pdf_backend_model_box=\box53
+\g__pdf_backend_annotation_int=\count194
+\g__pdf_backend_link_int=\count195
+\g__pdf_backend_link_sf_int=\count196
 )
 (./write-up.aux)
 \openout1 = `write-up.aux'.
@@ -56,26 +62,23 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 10.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 10.
+ (./write-up.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 2.
+)
+\tf@toc=\write3
+\openout3 = `write-up.toc'.
+
  [1
 
-{/app/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}] (./write-up.aux) 
-) 
+] [2] (./write-up.aux) ) 
 Here is how much of TeX's memory you used:
- 489 strings out of 476025
- 9284 string characters out of 5791510
- 1850388 words of memory out of 5000000
- 21007 multiletter control sequences out of 15000+600000
- 516534 words of font info for 46 fonts, out of 8000000 for 9000
+ 503 strings out of 476026
+ 9689 string characters out of 5791536
+ 1853385 words of memory out of 5000000
+ 21020 multiletter control sequences out of 15000+600000
+ 517766 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,5n,38p,150b,192s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</app/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></app/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></app/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr10.pfb></app/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr12.pfb>
-Output written on write-up.pdf (1 page, 35681 bytes).
-PDF statistics:
- 28 PDF objects out of 1000 (max. 8388607)
- 16 compressed objects within 1 object stream
- 0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 33i,6n,38p,158b,194s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
+Output written on write-up.dvi (2 pages, 2584 bytes).
