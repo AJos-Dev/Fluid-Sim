@@ -1,4 +1,4 @@
-\documentclass[a4paper,9pt]{article}
+\documentclass[a4paper,11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[paper=a4paper]{geometry}
 \usepackage[numbers]{natbib}
@@ -10,6 +10,12 @@
     urlcolor=cyan,
     }
 \usepackage{multicol}
+\usepackage{lipsum}
+\usepackage{sectsty}
+
+\sectionfont{\fontsize{13}{13}\selectfont}
+\subsectionfont{\fontsize{12}{12}\selectfont}
+
 
 %opening
 \title{\textbf{Simulating Fluid Motion using Smoothed Particle Hydrodynamics}}
@@ -36,7 +42,7 @@ The field of simulation is one with many applications in all industries, with mu
 \\~\\
 \indent Simulating fluids involves observation of fluid phenomena such as wind, weather, ocean waves, waves induced by ships or simply pouring a glass of water. Such phenomena may seem extremely trivial at first glance, but in reality involve an extremely deep understanding of physical, mathematical and algorithmic methods, far beyond the A level specification for any related subjects.
 \subsection{Smoothed Particle Hydrodynamics}
-There are two main approaches for fluid sim, eulerian (desci it) and lagrangain (SPH)
+Smoothed Particle Hydrodynamics (SPH) is a Lagrangian $^1$ approach to simulating fluids. Initially developed for solving astrophysical problems by Lucy \cite{lucy} and by Gingold and Monaghan \cite{gingold}, it was then adapted for interactive liquid simulation and rendering by M{\"u}ller \textit{et al.} \cite{muller}. In SPH, space is non-uniformly sampled using particles. These particles are small globules of a fluid which maintain various field properties such as mass, density or velocity and are tracked during the simulation. The field quantities can be evaluated anywhere in space by looking at the overlaps of each particle's sphere of influence.
 \nocite{*}
 \subsection{Outline and Structure}
 %Incompressible non-gasseous fluid
@@ -49,9 +55,9 @@ There are two main approaches for fluid sim, eulerian (desci it) and lagrangain 
 \section{Theoretical model}
 \section{Development and Testing}
 \section{Conclusion and Final Remarks}
-\end{multicols}
 
 \newpage
 \bibliographystyle{IEEEtranN}
 \bibliography{bibfile.bib}
+\end{multicols}
 \end{document}
