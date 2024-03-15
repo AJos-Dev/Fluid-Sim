@@ -10,7 +10,6 @@
     urlcolor=cyan,
     }
 \usepackage{multicol}
-\usepackage{lipsum}
 \usepackage{sectsty}
 
 \sectionfont{\fontsize{11}{11}\selectfont}
@@ -37,10 +36,11 @@
 
 \begin{multicols}{2}
 \section{Introduction}
-\subsection{Motivation}
 The field of simulation is one with many applications in all industries, with much overlap between Mathematics, Physics and Computer Science due to its predictable behaviour. One such application is Computational Fluid Dynamics (CFD), or in other words predicting the movement of fluids, which will be the focus for this project.
 
 Simulating fluids involves observation of fluid phenomena such as wind, weather, ocean waves, waves induced by ships or simply pouring a glass of water. Such phenomena may seem extremely trivial at first glance, but in reality involve an extremely deep understanding of physical, mathematical and algorithmic methods.
+
+\subsection{Motivation}
 
 \subsection{Smoothed Particle Hydrodynamics}
 Smoothed Particle Hydrodynamics (SPH) stands out as a Lagrangian (particle-based) approach to fluid simulation, offering a dynamic method for modeling complex fluid behavior. Developed from the work of Lucy \cite{lucy} and Gingold and Monaghan \cite{gingold} in astrophysics, its transformative potential was further realized in interactive liquid simulation and rendering, thanks to the efforts of Müller \textit{et al.} \cite{muller}.
@@ -51,6 +51,7 @@ In SPH, the spatial domain is discretized into particles, each embodying various
 I plan to code a small semi-realistic animation of an incompressible liquid in the programming language C++. This will initially involve researching SPH techniques, how they incorporate liquid phenomena and how these phenomena can be described mathematically to come up with a Theoretical model. I will then implement each section of the theoretical model in C++, test its efficacy and possibly look into optimisation techniques as required.
 
 \subsection{Skills and Intentions}
+
 %Explore a topic not taught at A levels, beyond comfort zone, etc, etc
 %Learn a new programming langauge
 %Learn to typeset in LaTeX, write an official paper.
