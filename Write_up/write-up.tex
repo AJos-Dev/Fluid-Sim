@@ -42,12 +42,24 @@ Simulating fluids involves observation of fluid phenomena such as wind, weather,
 
 \subsection{Motivation}
 
-My motivation for this project stems from the work of Sebastian Lague \cite{Lague}, a games developer who shares his exemplar work on Github and through digital media on Youtube. Through his work, I was introduced to the concept of Smoothed Particle Hydrodynamics in the Computer Graphics community and was given great insight into the expectations from a project such as this. Further reading, especially into the sources of Lague, piqued my interest and only reinforced the idea of undertaking this concept as it provided the overlap between Mathematics, Physics and Computer Science and because it was far beyond the scope of the A level curriculum.
+My motivation for this project stems from the work of Sebastian Lague \cite{Lague}, a games developer who shares his exemplar work on Github and through digital media on YouTube. Through his work, I was introduced to the concept of Smoothed Particle Hydrodynamics in the Computer Graphics community and was given great insight into the expectations from a project such as this. Further reading, especially into the sources of Lague, piqued my interest and only reinforced the idea of undertaking this concept because it provided the overlap between Mathematics, Physics and Computer Science, it was far beyond the scope of the A level curriculum but most importantly it provided a means to challenge, extend and implement new knowledge in a field which I plan to undertake in the future.
+
+\subsection{Smoothed Particle Hydrodynamics}
+Smoothed Particle Hydrodynamics (SPH) stands out as a Lagrangian \footnote{Particle-based} approach to fluid simulation, offering a dynamic method for modeling complex fluid behavior. Developed in 1977 from the work of Lucy \cite{lucy} and Gingold and Monaghan \cite{gingold} in astrophysics, it posed as a strong alternative to existing methods at the time. Its transformative potential was further realized in interactive liquid simulation, thanks to the efforts of Müller \textit{et al.} \cite{muller} in 2003.
+
+In SPH, the spatial domain is approximated into particles, each embodying various fluid properties like mass, density, and velocity. Throughout the simulation, these particles dynamically interact, forming a fluid-like continuum. Notably, the field quantities characterizing the fluid, such as pressure or velocity, can be precisely evaluated at any point in space by observing the overlapping influence spheres of individual particles. Adaptability and precision makes SPH a compelling choice for simulating fluid phenomena across a spectrum of scales and applications.
 
 \subsection{Outline and Structure}
-I plan to code a small semi-realistic 2-D animation of an incompressible liquid in the programming language C++. This will involve describing liquid phenomena mathematically to come up with a theoretical model. I will then implement each section of the theoretical model in C++, test its efficacy and possibly look into optimisation techniques as required. To evaluate the success of my simulation I will check the outcome of each component within the theoretical model and observe whether it performs as described. This allows my theoretical model to form part of my success criteria.
+I plan to code a semi-realistic 2-D animation of an incompressible liquid in the programming language C++. This will involve describing liquid phenomena mathematically to come up with a theoretical model. I will then implement each section of the theoretical model, test its efficacy and possibly look into optimisation techniques as required. Finally to evaluate the success of my simulation I will check against the success criteria, reverting to previous methods of development if necessary.
 
 \subsection{Success Criteria}
+The success criteria is as follows:
+\begin{itemize}
+ \item Implement all aspects of the Theoretical model within the animation where every section behaves as intended.
+ \item Implement each section in C++.
+ \item Have an animation of a semi-realistic 2-D incompressible fluid.
+ \item Have an animation that runs at a satisfactory speed with minimal time lag and resource wastage.
+\end{itemize}
 \subsection{Skills}
 %\begin{enumerate}
  %\item Research the hardware and software requirements to build a semi-realistic liquid simulation.
@@ -64,14 +76,20 @@ I plan to code a small semi-realistic 2-D animation of an incompressible liquid 
 %Learn to typeset in LaTeX, write an official paper.
 %Useful at university
 \section{Research Review}
-\subsection{Smoothed Particle Hydrodynamics}
-Smoothed Particle Hydrodynamics (SPH) stands out as a Lagrangian \footnote{Particle based} approach to fluid simulation, offering a dynamic method for modeling complex fluid behavior. Developed in 1977 from the work of Lucy \cite{lucy} and Gingold and Monaghan \cite{gingold} in astrophysics, it posed as a strong alternative to existing methods at the time. Its transformative potential was further realized in interactive liquid simulation, thanks to the efforts of Müller \textit{et al.} \cite{muller} in 2003.
+\subsection{Relevant Literature}
+% talk about where the sources are from? Siggraph, Google scholar, Github
+\begin{itemize}
+ \item Lucy \cite{lucy} introduced Smoothed Particle Hydrodynamics as a numerical testing tool for astrophysical calculations involving fission within stars. This idea of quantity interpolation or ``approximation" of fluid quantities was furthered by Gingold and Monaghan \cite{gingold} and applied to non-spherical stars. Although both sources provide appropriate applications of this technique, the obvious limitation is that the majority is within the context of Astrophysics and not CFD. Additionally, both sources were released in 1977 with major development in the simulation field, such as the use of more modern optimisation techniques which utilise the powerful hardware now widely available, leading to the source being obsolete for present-day applicational use.
 
-In SPH, the spatial domain is approximated into particles, each embodying various fluid properties like mass, density, and velocity. Throughout the simulation, these particles dynamically interact, forming a fluid-like continuum. Notably, the field quantities characterizing the fluid, such as pressure or velocity, can be precisely evaluated at any point in space by observing the overlapping influence spheres of individual particles. Adaptability and precision makes SPH a compelling choice for simulating fluid phenomena across a spectrum of scales and applications.
+ \item The work of Müller \textit{et al.} \cite{muller} adapted SPH for interactive fluid applications, the first of its kind, putting forward an alternative Lagrangian method than the more common Eulerian\footnote{Grid-based} method used for CG and modelling purposes. The paper provides a gentle introduction to SPH with a mathematical brief to the most important phenomena observed within fluids for simulation, including Pressure, Viscosity and Surface Tension. There is a distinct lack of algorithms, which leaves implementation up to the reader but the paper fulfills its purpose as an excellent introduction to SPH.
 
-In terms of my sources for this technique, the obvious limitations are that the work of Lucy \cite{lucy} and Gingold and Monaghan \cite{gingold} are used within the context of astrophysics and are technologically outdated as they were written in 1977, with revolutionary advancements in technology since. The work of Müller \textit{et al.} introduced this concept as a tool for the entertainment and engineering industry, with the largest limitation being that it was released in 2003 leading to slightly more optimised approaches since. Regardless, the work is still widely incorporated today with much of the Computer Graphics community incorporating this technique aided by recent Tutorial publications such by Koschier \textit{et al.} \cite{koschier} in 2019.
+ \item After the foundational work in 2003, Clavet \textit{et al.} \cite{clavet} release their work two years after with the primary focus on implementation, introducing key algorithms such as the Simulation step which covers the pesudocode for every frame of the animation and how the quantities of individual particles change frame by frame. Specific to implementation, the near-density and near-pressure tricks are also introduced which prevent an issue that causes liquid particles to cluster.%clavet, SPH with a much bigger focus on description using algorithms e.g. simulation step, near-density and pressure tricks to prevent clustering, making implementation easier. More images too after implementation of a phenomena which helps visualisation.
+
+ \item An example of a more recent publication is Koschier \textit{et al.} \cite{koschier} in 2019. This tutorial summarises the state of SPH in its entirety by covering the theory and implementation rigorously, but also with a focus on optimisation methods to lessen compute time utlising modern hardware. The tutorial is also diagrammatic and visual helping reinforce the ideas being expressed. Compared to earlier iterations covering SPH, this paper acts as the ultimate guide by placing all the information needed in one document.%koschier a huge summary of all SPH related work, with a focus on optimisation methods as well as implementation. Extremely diagrammatic which is very good.
+\end{itemize}
 \subsection{Alternative Approaches}
-\subsection{Softwares}
+%talk about bridsons book using eulerian methods, what they are and why SPH is better
+\subsection{Software}
 \subsection{Hardware}
 %hardware too (powerful pc)
 %c++ and why, SFML and why, Latex and why, SPH and why (talk about alternative methods e.g. Eulerian or non-SPH Lagrangian ), why Lague? why muller and koschier and clavet?
