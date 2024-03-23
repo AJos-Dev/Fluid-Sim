@@ -1,0 +1,45 @@
+\documentclass[write-up.tex]{subfiles}
+
+\begin{document}
+
+\section{Introduction}
+The field of simulation is one with many applications in all industries, with much overlap between Mathematics, Physics and Computer Science due to its predictable behaviour. One such application is Computational Fluid Dynamics (CFD), or in other words predicting the movement of fluids, which will be the focus for this project.
+
+Simulating fluids involves observation of fluid phenomena such as wind, weather, ocean waves, waves induced by ships or simply pouring a glass of water. Such phenomena may seem extremely trivial at first glance, but in reality involve a deeper understanding of physical, mathematical and algorithmic methods.
+
+\subsection{Motivation}
+
+My motivation for this project stems from the work of Sebastian Lague \cite{Lague}, a games developer who shares his exemplar work on Github and through digital media on YouTube. Through his work, I was introduced to the concept of Smoothed Particle Hydrodynamics in the Computer Graphics community and was given great insight into the expectations from a project such as this. Further reading, especially into the sources of Lague, piqued my interest and only reinforced the idea of undertaking this concept because it provided the overlap between Mathematics, Physics and Computer Science, it was far beyond the scope of the A level curriculum but most importantly it provided a means to challenge, extend and implement new knowledge in a field which I plan to undertake in the future.
+
+\subsection{Smoothed Particle Hydrodynamics}
+Smoothed Particle Hydrodynamics (SPH) stands out as a Lagrangian \footnote{Particle-based} approach to fluid simulation, offering a dynamic method for modeling complex fluid behavior. Developed in 1977 from the work of Lucy \cite{lucy} and Gingold and Monaghan \cite{gingold} in astrophysics, it posed as a strong alternative to existing methods at the time. Its transformative potential was further realized in interactive liquid simulation, thanks to the efforts of Müller \textit{et al.} \cite{muller} in 2003.
+
+In SPH, the spatial domain is approximated into particles, each embodying various fluid properties like mass, density, and velocity. Throughout the simulation, these particles dynamically interact, forming a fluid-like continuum. Notably, the field quantities characterizing the fluid, such as pressure or velocity, can be precisely evaluated at any point in space by observing the overlapping influence spheres of individual particles. Adaptability and precision makes SPH a compelling choice for simulating fluid phenomena across a spectrum of scales and applications.
+
+\subsection{Outline and Structure}
+I plan to code a semi-realistic 2-D animation of an incompressible liquid in the programming language C++. This will involve describing liquid phenomena mathematically to come up with a theoretical model. I will then implement each section of the theoretical model, test its efficacy and possibly look into optimisation techniques as required. Finally to evaluate the success of my simulation I will check against the success criteria, reverting to previous methods of development if necessary.
+
+\subsection{Success Criteria}
+The success criteria is as follows:
+\begin{itemize}
+ \item Implement all aspects of the Theoretical model within the animation where every section behaves as intended.
+ \item Implement each section in C++.
+ \item Have an animation of a semi-realistic 2-D incompressible fluid.
+ \item Have an animation that runs at a satisfactory speed with minimal time lag and resource wastage.
+\end{itemize}
+\subsection{Skills}
+%\begin{enumerate}
+ %\item Research the hardware and software requirements to build a semi-realistic liquid simulation.
+ %\item Research the components required to build a semi-realistic liquid simulation.
+ %\item Describe and explain each component either mathematically or algorthmically in the Theoretical model.
+ %\item Implement the Theoretical model in C++ component by component.
+ %\item Test the efficacy of the implemented simulation by deciding whether each component fulfills its purpose.
+ %\item Have a final animation file which resembles a semi realistic 2-D liquid.
+%\end{enumerate}
+
+
+%Explore a topic not taught at A levels, beyond comfort zone, etc, etc
+%Learn a new programming langauge
+%Learn to typeset in LaTeX, write an official paper.
+%Useful at university
+\end{document}

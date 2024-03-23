@@ -1,0 +1,22 @@
+\documentclass[write-up.tex]{subfiles}
+
+\begin{document}
+
+\section{Research Review}
+\subsection{History and Relevant Literature}
+% talk about where the sources are from? Siggraph, Google scholar, Github
+Lucy \cite{lucy} introduced Smoothed Particle Hydrodynamics as a numerical testing tool for astrophysical calculations involving fission within stars. This idea of quantity interpolation or ``approximation" of fluid quantities was furthered by Gingold and Monaghan \cite{gingold} and applied to non-spherical stars. Although both sources provide appropriate applications of this technique, the obvious limitation is that the majority is within the context of Astrophysics and not CFD. Additionally, both sources were released in 1977 with major development in the simulation field, such as the use of more modern optimisation techniques which utilise the powerful hardware now widely available, leading to the source being obsolete for present-day applicational use.
+
+The work of Müller \textit{et al.} \cite{muller} adapted SPH for interactive fluid applications, the first of its kind, putting forward an alternative Lagrangian method than the more common Eulerian\footnote{Grid-based} method used for CG and modelling purposes. The paper provides a gentle introduction to SPH with a mathematical brief to the most important phenomena observed within fluids for simulation, including Pressure, Viscosity and Surface Tension. There is a distinct lack of algorithms, which leaves implementation up to the reader but the paper fulfills its purpose as an excellent introduction to SPH.
+
+After the foundational work in 2003, Clavet \textit{et al.} \cite{clavet} release their work two years after with the primary focus on implementation, introducing key algorithms such as the Simulation step which covers the pesudocode for every frame of the animation and how the quantities of individual particles change frame by frame. Problems specific to implementation are also acknowledged, for example the near-density and near-pressure tricks are also introduced which prevent an issue that causes liquid particles to cluster.%clavet, SPH with a much bigger focus on description using algorithms e.g. simulation step, near-density and pressure tricks to prevent clustering, making implementation easier. More images too after implementation of a phenomena which helps visualisation.
+
+An example of a more recent publication is Koschier \textit{et al.} \cite{koschier} in 2019. This tutorial summarises the state of SPH in its entirety by covering the theory and implementation rigorously, but also with a focus on optimisation methods to lessen compute time utlising modern hardware. The tutorial is also diagrammatic and visual helping reinforce the ideas being expressed. Compared to earlier iterations covering SPH, this paper acts as the ultimate guide by placing all the information needed in one document. The paper does dive much deeper into the niche complexities involved with simulating any fluids or even soft-bodied solids which are beyond the scope of this project.%koschier a huge summary of all SPH related work, with a focus on optimisation methods as well as implementation. Extremely diagrammatic which is very good.
+
+\subsection{Alternative Approaches}
+%talk about bridsons book using eulerian methods, what they are and why SPH is better
+\subsection{Software}
+\subsection{Hardware}
+%hardware too (powerful pc)
+%c++ and why, SFML and why, Latex and why, SPH and why (talk about alternative methods e.g. Eulerian or non-SPH Lagrangian ), why Lague? why muller and koschier and clavet?
+\end{document}
