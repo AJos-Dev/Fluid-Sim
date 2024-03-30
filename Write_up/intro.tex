@@ -1,5 +1,4 @@
 \documentclass[write-up.tex]{subfiles}
-
 \begin{document}
 
 \section{Introduction}
@@ -7,12 +6,36 @@ The field of simulation is one with many applications in all industries, with mu
 
 Simulating fluids involves observation of fluid phenomena such as wind, weather, ocean waves, waves induced by ships or simply pouring a glass of water. Such phenomena may seem extremely trivial at first glance, but in reality involve a deeper understanding of physical, mathematical and algorithmic methods.
 
+
 \subsection{Motivation}
 
 My motivation for this project stems from the work of Sebastian Lague \cite{Lague}, a games developer who shares his exemplar work on Github and through digital media on YouTube. Through his work, I was introduced to the concept of Smoothed Particle Hydrodynamics in the Computer Graphics community and was given great insight into the expectations from a project such as this. Further reading, especially into the sources of Lague, piqued my interest and only reinforced the idea of undertaking this concept because it provided the overlap between Mathematics, Physics and Computer Science, it was far beyond the scope of the A level curriculum but most importantly it provided a means to challenge, extend and implement new knowledge in a field which I plan to undertake in the future.
 
+\subsection{Definitions}
+In this section, I provide clear and concise definitions for the key terms essential to understanding the context and methods presented in this paper.
+\begin{worddefs}
+ \item [Computer Graphics.] A technology that generates images and videos on a computer screen, also referred to as CG.
+ \item [Simulation.] Imitation of a situation or process.
+ \item [Frame.] A single image which makes up a collection of images for an animation.
+ \item [Algorithm.] A set of instructions used to solve a particular problem or perform a specific task.
+ \item [Pseudocode.] Writing an algorithm in plain English for design purposes.
+ \item [Optimisation.] Modifying an algorithm or software to reduce the usage of computer resources or compute time.
+ \item [Lagrangian.] A particle based approach to simulation.
+ \item[Eulerian.] A grid based approach to simulation.
+ \item[Velocity.] Speed of an entity associated with a direction.
+ \item[Acceleration.] The rate of change of velocity.
+ \item[Force.] An influence which causes an object to accelerate.
+ \item[Friction.] A force resisting the relative motion of an object.
+ \item [Fluid.] Any substance which flows due to applied forces, namely Liquids and Gasses.
+ \item [Liquid.] A type of fluid which takes the shape of any container or vessel it is stored within.
+ \item[Density.] The compactness of a substance, or the mass per unit volume.
+ \item[Pressure.] The physical force exerted on an object by something in contact with it, or the force per unit area.
+ \item[Viscosity.] A quantity defining the magnitude of the internal friction in a fluid, or the Pressure resisting uniform flow.
+ \item[Surface Tension.] The tension on the surface of a liquid caused by the attraction of particles in the surface layer, tends to minimise surface area.
+\end{worddefs}
+
 \subsection{Smoothed Particle Hydrodynamics}
-Smoothed Particle Hydrodynamics (SPH) stands out as a Lagrangian \footnote{Particle-based} approach to fluid simulation, offering a dynamic method for modeling complex fluid behavior. Developed in 1977 from the work of Lucy \cite{lucy} and Gingold and Monaghan \cite{gingold} in astrophysics, it posed as a strong alternative to existing methods at the time. Its transformative potential was further realized in interactive liquid simulation, thanks to the efforts of Müller \textit{et al.} \cite{muller} in 2003.
+Smoothed Particle Hydrodynamics (SPH) stands out as a Lagrangian approach to fluid simulation, offering a dynamic method for modeling complex fluid behavior. Developed in 1977 from the work of Lucy \cite{lucy} and Gingold and Monaghan \cite{gingold} in astrophysics, it posed as a strong alternative to existing methods at the time. Its transformative potential was further realized in interactive liquid simulation, thanks to the efforts of Müller \textit{et al.} \cite{muller} in 2003.
 
 In SPH, the spatial domain is approximated into particles, each embodying various fluid properties like mass, density, and velocity. Throughout the simulation, these particles dynamically interact, forming a fluid-like continuum. Notably, the field quantities characterizing the fluid, such as pressure or velocity, can be precisely evaluated at any point in space by observing the overlapping influence spheres of individual particles. Adaptability and precision makes SPH a compelling choice for simulating fluid phenomena across a spectrum of scales and applications.
 

@@ -12,9 +12,12 @@
 \usepackage{multicol}
 \usepackage{sectsty}
 \usepackage{subfiles}
+\usepackage{enumitem}
+\newlist{worddefs}{description}{1}
+\setlist[worddefs]{font=\bfseries, labelindent=\parindent, leftmargin=6em, style=sameline}
 
-\sectionfont{\fontsize{11}{11}\selectfont}
-\subsectionfont{\fontsize{11}{11}\selectfont}
+%\sectionfont{\fontsize{11}{11}\selectfont}
+%\subsectionfont{\fontsize{11}{11}\selectfont}
 
 
 %opening
@@ -35,14 +38,14 @@
 \par\noindent\rule{\textwidth}{0.3pt}
 \tableofcontents
 \newpage
-
 \begin{multicols}{2}
 \subfile{intro.tex}
+\pagebreak
 \subfile{research-review.tex}
 
 \section{Theoretical model}
 \section{Development and Testing}
-\section{Conclusion and Final Remarks}
+\section{Evaluation and Final Remarks}
 
 \newpage
 \nocite{*}
