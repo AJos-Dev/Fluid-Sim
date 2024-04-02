@@ -19,7 +19,7 @@ An alternative approach for simulating fluids I have mentioned across this write
 Grid-based approaches have the advantage of having higher numerical accuracy and efficiency because solving PDEs can be optimised using techniques like finite difference or finite volume methods. Exactly enforcing incompressibility is important for accurate production of turbulence, and SPH methods have a hard time enforcing incompressibility efficiently. They also can have difficulty allocating computational elements throughout space efficiently. For these reasons, they have not been demonstrated to be effective for calculating flows such as air around a car, as stated per this paper by NVIDIA employees in proceedings of the 2010 ACM SIGGRAPH symposium \cite{cohen}.
 
 For my artefact, I aim to create a semi-realistic animation of a liquid suggesting SPH is a viable technique as I do not aim for accuracy like some applications in industry require, for example modelling airflow around rocket fuselages. Furthermore, I aim to create an element of interaction by resizing windows to show some kind of advection. ``Particle-based methods like Smoothed Particle Hydrodynamics (SPH) are attractive because they do not suffer from the limitation to be inside a box'' \cite{cohen}, also implying that resizing is impractical to implement with an Eulerian approach as resizing the window would restructure the grids that an Eulerian approach relies upon.
-
+\vfill
 %hardware too (powerful pc)
 %c++ and why, SFML and why, Latex and why, SPH and why (talk about alternative methods e.g. Eulerian or non-SPH Lagrangian ), why Lague? why muller and koschier and clavet?
 \end{document}
