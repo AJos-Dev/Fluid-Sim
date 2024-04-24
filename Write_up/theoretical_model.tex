@@ -4,9 +4,7 @@
 \section{Theoretical model}
 \subsection{Smoothing Kernel}
 
-The fundamental property every SPH particle has is a circle of influence which is dictated by the Smoothing Kernel $W(r, h)$, where $r$ is the distance between the sample point and the particle centre and $h$ is the radius of the circle of influence, also known as the smoothing radius. The closer a sample point is to the centre of the particle, the larger the influence the particle has on the sample point. This influence value can be described and quantified by picking an appropriate smoothing kernel, which is vital as it is used by the \hyperlink{Interpolation Equation}{\textbf{Interpolation Equation}} to calculate scalar quantities, most notably density.
-
-Müller \textit{et al.}\cite{muller} describe two popular smoothing kernels, both with different properties.
+Each SPH particle has a circle of influence determined by the Smoothing Kernel $W(r,h)$ where $r$ is the distance from the sample point to the particle center and $h$ is the smoothing radius. The influence of a particle on a sample point increases as the sample point gets closer to the particle center. The choice of smoothing kernel is crucial as it is used by the \hyperlink{Interpolation Equation}{\textbf{Interpolation Equation}} to calculate scalar quantities, such as density. Müller \textit{et al.}\cite{muller} describe two popular smoothing kernels, each with different properties.
 
 \begin{center}
 $
@@ -34,7 +32,7 @@ $
 \end{axis}
 \end{tikzpicture}
 
-$W_{\text{poly}}(r, h)$ was created as an all purpose kernel with its major highlight being that $r$ appears squared, so the square root does not need to be evaluated when using the Pythagorean Theorem to calculate distance, easing the distance computations. Müller \textit{et al.}\cite{muller} mention that if this kernel is used for pressure computations, which this project will entail to enforce incompressibility, a problem arises where the particles will tend to cluster because the gradient is used to compute pressure. The gradient of $W_{\text{poly}}(r, h)$ drops close to $0$ for small $r$ leading to a diminishing repulsion force.
+$W_{\text{poly}}(r, h)$ is a versatile kernel designed to simplify distance computations by squaring the distance term, eliminating the need for square root calculations when using the Pythagorean Theorem. However, Müller \textit{et al.}\cite{muller} note that when $W_{\text{poly}}(r, h)$ is used for pressure computations, as required for enforcing incompressibility in this project, particles tend to cluster due to the gradient's effect on pressure calculation. The gradient of $W_{\text{poly}}(r, h)$ approaches zero for small distances, resulting in a diminishing repulsion force.
 
 \begin{center}
 $
@@ -62,9 +60,26 @@ $
 \end{axis}
 \end{tikzpicture}
 
-$W_{\text{spiky}}(r, h)$ is used specifically for pressure computations. Its gradient is high when $r$ is close to $0$, generating the required repulsion forces for pressure calculations and therefore making it the superior choice for my simulation.
+$W_{\text{spiky}}(r, h)$ is used specifically for pressure computations. Its gradient is high when $r$ is close to $0$, generating the required repulsion forces for pressure calculations and therefore making it the superior choice for my simulation. Note that for the simulation, the influence value returned will also be divided by the volume of our kernel, this keeps values consistent regardless of our values of $h$.
+
+
+\begin{tikzpicture}
+\begin{axis}[
+    title=Example using the mesh parameter,
+    hide axis,
+    colormap/cool,
+]
+\addplot3[
+    mesh,
+    samples=50,
+    domain=-2:2,
+]
+{15/3.14 * (1-x)^3 +y^2};
+\end{axis}
+\end{tikzpicture}
 
 \subsection{Interpolation Equation}
+The Interpolation Equation is responsible for calculating a scalar quantity $A$ at a location $r$ by a weighted sum of contributions from all the particles within our simulation. This is given by:
 
 
 
