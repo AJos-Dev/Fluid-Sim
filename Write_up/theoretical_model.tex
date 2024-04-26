@@ -75,7 +75,7 @@ $
 The simulation step updates the position vectors of the particles according to the rate of change of the properties every frame. We can calculate this rate of change by taking the derivative of our smoothing kernel with respect to r:
 
 \begin{align*}
-W_{\text{spiky}}(r, h) &= \displaystyle \frac{15}{\pi h^6} \\
+W_{\text{spiky}}(r, h) &= \displaystyle \frac{15}{\pi h^6} (h-r)^3 \\
 \pdv{W}{r} &= -\frac{45}{\pi h^6} (h-r)^2
 \end{align*}
 
