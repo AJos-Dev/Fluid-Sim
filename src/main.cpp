@@ -4,25 +4,33 @@
 
 using namespace std;
 
+//"g++ test.cpp -o test -lsfml-graphics -lsfml-window -lsfml-system" to compile in terminal
 
 class droplet {
     public:
-        int mass = 1; 
-        vector<float> position({23.f, 23.f});
-        vector<float> velocity({0.f, 0.f});
+        int mass = 1;
+        sf::CircleShape shape{10.f};
+        sf::Vector2f position;
+        sf::Vector2f velocity{0, 0};
+        droplet(){
+        shape.setFillColor(sf::Color::Green);
+        }
+        
 };
-
-
-//"g++ test.cpp -o test -lsfml-graphics -lsfml-window -lsfml-system" to compile in terminal
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+    //Initialize SFML
+    sf::RenderWindow window(sf::VideoMode(500, 750), "SFML works!");
     window.setFramerateLimit(60);
-    sf::CircleShape shape(10.f);
-    shape.setFillColor(sf::Color::Green);
-
     sf::View view = window.getDefaultView();
+
+    //Initialize fluid-related
+    //const int droplet_num; //add eventually
+    const float dt = 1.f/60.f;
+    const float gravity = 9.81; //ms^-2
+    droplet sample;
+
 
     while (window.isOpen())
     {
@@ -38,8 +46,11 @@ int main()
         }
         sf::Vector2u size = window.getSize();
         window.clear();
-        shape.move(1.f, 2.f);
-        window.draw(shape);
+        sample.velocity.y += gravity * dt;
+        sample.shape.move(sample.velocity.x * dt, sample.velocity.y);
+        window.draw(sample.shape);
+        
+        
         window.display();
     }
 
