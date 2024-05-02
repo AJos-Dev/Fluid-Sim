@@ -69,6 +69,7 @@ The Interpolation Equation is responsible for calculating a scalar quantity $A$ 
 $
     A_s(r) = \sum_{j} m_j \frac{A_j}{\rho_j}W(r-r_j, h)
 $
+\cite{muller}
 \end{center}
 
 \subsection{SPH gradient optimisation}
@@ -82,6 +83,10 @@ W_{\text{spiky}}(r, h) &= \displaystyle \frac{15}{\pi h^6} (h-r)^3 \\
 
 \subsection{Pressure Forces and Newton's Third Law}
 
-\subsection{Particle Lookup Optimisation}
+After finding the local density at the location for each particle, the local density needs to be compared to a constant target density to get a density error value which is multiplied by some constant to get our Pressure Force. By Newton's second law, $F = ma$, we can find the acceleration of the particle and apply this to the particles within the simulation step. Furthermore, Newton's Third Law of Motion must also be applied in this context, where if a particle exerts a pressure force, it must experience an equal and opposite reaction force.
+
 \subsection{Viscosity}
+
+\subsection{Particle Lookup Optimisation}
+
 \end{document}
