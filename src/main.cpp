@@ -5,7 +5,6 @@
 #include <algorithm>
 #include<vector>
 #include<cmath>
-#include <math.h>
 
 using namespace std;
 
@@ -42,8 +41,10 @@ void resolveGravity(int i){
     particles[i].position.y += particles[i].velocity.y * dt;
 }
 
-float SmoothingKernel(double dst, double smoothing_radius = 50.f){
-    return max((float)0.0, (float)(15/(3.1415f * pow(smoothing_radius, 6.0)) * pow(smoothing_radius - dst, 3.0)));
+float smoothingKernel(double dst, double smoothing_radius = 50.f){
+    float volume = 3/2 * smoothing_radius;  
+    float value = max((float)0.0, (float)(15/(3.1415f * pow(smoothing_radius, 6.0)) * pow(smoothing_radius - dst, 3.0)));
+    return value/volume;
 }
 
 void resolveBoundingBox(int i, sf::Vector2u window_size){
