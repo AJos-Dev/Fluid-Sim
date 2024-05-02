@@ -5,6 +5,7 @@
 #include <algorithm>
 #include<vector>
 #include<cmath>
+#include <math.h>
 
 using namespace std;
 
@@ -39,6 +40,10 @@ void placeParticles(){
 void resolveGravity(int i){
     particles[i].velocity.y += gravity * dt;
     particles[i].position.y += particles[i].velocity.y * dt;
+}
+
+float SmoothingKernel(double dst, double smoothing_radius = 50.f){
+    return max((float)0.0, (float)(15/(3.1415f * pow(smoothing_radius, 6.0)) * pow(smoothing_radius - dst, 3.0)));
 }
 
 void resolveBoundingBox(int i, sf::Vector2u window_size){
@@ -79,7 +84,7 @@ int main()
         
         for (int i = 0; i < particle_num; i++){
             //gravity step  
-            resolveGravity(i);
+            //resolveGravity(i);
             // window bounding box
             resolveBoundingBox(i, window_size);
 
