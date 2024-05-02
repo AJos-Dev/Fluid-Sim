@@ -2,6 +2,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics.hpp>
 #include<iostream>
+#include <algorithm>
 #include<vector>
 #include<cmath>
 
@@ -12,6 +13,7 @@ using namespace std;
 const int particle_num = 1000; 
 const int particle_mass = 1;
 const int particle_radius = 5;
+const float collision_damping = 0.75f;
 const float dt = 1.f/60.f;
 const float gravity = 9.81; //ms^-2
 
@@ -24,7 +26,7 @@ struct particle{
 vector<particle> particles(particle_num);
 
 
-void place_particles(){
+void placeParticles(){
     int particlesPerRow = sqrt(particle_num);
     int particlesPerColumn = (particle_num - 1)/particlesPerRow + 1;
     int spacing = 2.5*particle_radius; 
@@ -34,16 +36,31 @@ void place_particles(){
     }
 }
 
+void resolveGravity(int i){
+    particles[i].velocity.y += gravity * dt;
+    particles[i].position.y += particles[i].velocity.y * dt;
+}
+
+void resolveBoundingBox(int i, sf::Vector2u window_size){
+    if (particles[i].position.x > window_size.x || particles[i].position.x < 0){
+        particles[i].position.x = clamp((int)particles[i].position.x, 0, (int)window_size.x);
+        particles[i].velocity.x *= -1 * collision_damping;
+    }
+    if (particles[i].position.y >= window_size.y || particles[i].position.y <= 0){
+        particles[i].position.y = clamp((int)particles[i].position.y, 0, (int)window_size.y);
+        particles[i].velocity.y *= -1 * collision_damping;   
+    }
+}
 //shape.setFillColor(sf::Color::Green);
 
 int main()
 {
     //Initialize SFML
     sf::RenderWindow window(sf::VideoMode(750, 750), "Smoothed Particle Hydrodynamics Simulation");
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(120);
     sf::View view = window.getDefaultView();
 
-    place_particles();
+    placeParticles();
 
     while (window.isOpen())
     {
@@ -57,17 +74,18 @@ int main()
                 window.setView(sf::View(visibleArea));
             }
         }
-        sf::Vector2u size = window.getSize();
+        sf::Vector2u window_size = window.getSize();
         window.clear();
         
         for (int i = 0; i < particle_num; i++){
-            //gravity step
-            particles[i].velocity.y += gravity * dt;
-            particles[i].position.y += particles[i].velocity.y * dt;
+            //gravity step  
+            resolveGravity(i);
+            // window bounding box
+            resolveBoundingBox(i, window_size);
 
             //set particle position with radius offset 
             particles[i].droplet.setPosition(particles[i].position.x-particle_radius, particles[i].position.y-particle_radius);
-            //
+
             window.draw(particles[i].droplet);
         }
         window.display();
