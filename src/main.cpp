@@ -1,19 +1,21 @@
-//"g++ main.cpp -o fluid_sim -lsfml-graphics -lsfml-window -lsfml-system" to compile in terminal
+//"g++ main.cpp -o fluid_sim -lsfml-graphics -lsfml-window -lsfml-system -fopenmp -Ofast" to compile in terminal
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics.hpp>
 #include<iostream>
 #include <algorithm>
 #include<vector>
 #include<cmath>
+#include <omp.h>
 
 using namespace std;
 
  //Initialize fluid-related
 
-const int particle_num = 1000; 
+const int particle_num = 3600; 
 const int particle_mass = 1;
 const int particle_radius = 5;
 const float collision_damping = 0.75f;
+double smoothing_radius = 50.f;
 const float dt = 1.f/60.f;
 const float gravity = 9.81; //ms^-2
 
@@ -31,8 +33,8 @@ void placeParticles(){
     int particlesPerColumn = (particle_num - 1)/particlesPerRow + 1;
     int spacing = 2.5*particle_radius; 
     for (int i = 0; i < particle_num; i++){
-        particles[i].position.x = (i % particlesPerRow + particlesPerRow / 2.f + 0.5f) * spacing;
-        particles[i].position.y = (i / particlesPerRow + particlesPerColumn / 2.f + 0.5f) * spacing;
+        particles[i].position.x = (i % particlesPerRow + particlesPerRow / 5.f + 0.5f) * spacing;
+        particles[i].position.y = (i / particlesPerRow + particlesPerColumn / 5.f + 0.5f) * spacing;
     }
 }
 
@@ -41,10 +43,32 @@ void resolveGravity(int i){
     particles[i].position.y += particles[i].velocity.y * dt;
 }
 
-float smoothingKernel(double dst, double smoothing_radius = 50.f){
-    float volume = 3/2 * smoothing_radius;  
-    float value = max((float)0.0, (float)(15/(3.1415f * pow(smoothing_radius, 6.0)) * pow(smoothing_radius - dst, 3.0)));
+float smoothingKernel(double dst){
+    float volume = 3/(2 * smoothing_radius);  
+    float value = max((float)0.0, (float)pow(smoothing_radius - dst, 3.0));
     return value/volume;
+}
+
+/*
+float calculateDensity(sf::Vector2f sample_point){
+    float density = 0;
+    for (auto &particlet: particles){
+        float dst = sqrt(pow((double)(particlet.position.x - sample_point.x), 2.0) + pow((double)(particlet.position.y - sample_point.y), 2.0));
+        float influence = smoothingKernel(dst);
+        density += particle_mass * influence; 
+    }
+    return density;
+}
+*/
+float calculateDensity(sf::Vector2f sample_point){
+    float density = 0;
+    //#pragma omp parallel for num_threads(5) 
+    for (int j =0; j < particle_num; j++){
+        float dst = sqrt(pow((double)(particles[j].position.x - sample_point.x), 2.0) + pow((double)(particles[j].position.y - sample_point.y), 2.0));
+        float influence = smoothingKernel(dst);
+        density += particle_mass * influence; 
+    }
+    return density;
 }
 
 void resolveBoundingBox(int i, sf::Vector2u window_size){
@@ -62,7 +86,7 @@ void resolveBoundingBox(int i, sf::Vector2u window_size){
 int main()
 {
     //Initialize SFML
-    sf::RenderWindow window(sf::VideoMode(750, 750), "Smoothed Particle Hydrodynamics Simulation");
+    sf::RenderWindow window(sf::VideoMode(900, 900), "Smoothed Particle Hydrodynamics Simulation");
     window.setFramerateLimit(120);
     sf::View view = window.getDefaultView();
 
@@ -82,13 +106,15 @@ int main()
         }
         sf::Vector2u window_size = window.getSize();
         window.clear();
+        //TO-DO: Calculate and cache densities
         
         for (int i = 0; i < particle_num; i++){
             //gravity step  
-            //resolveGravity(i);
+            resolveGravity(i);
             // window bounding box
             resolveBoundingBox(i, window_size);
-
+            //calculate densities
+            calculateDensity(particles[i].position);
             //set particle position with radius offset 
             particles[i].droplet.setPosition(particles[i].position.x-particle_radius, particles[i].position.y-particle_radius);
 
