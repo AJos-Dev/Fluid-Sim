@@ -14,14 +14,13 @@ using namespace std;
 const int particle_num = 1600; 
 const int particle_mass = 1;
 const int particle_radius = 5;
-const float collision_damping = 0.75f;
+const float collision_damping = 0.1f;
 const float pi = 3.141f;
 const float target_density = 0.001f;
 const float pressure_multiplier = 1000.f;
-//double smoothing_radius = 200.f;
-double smoothing_radius = 200.f;//TEST!!!
-const float dt = 1.f/60.f;
-const float gravity = 100.f; 
+double smoothing_radius = 200.f;
+const float dt = 1.f/480.f;
+const float gravity = 1000.f; 
 
 struct particle{
     sf::CircleShape droplet{particle_radius};
@@ -113,7 +112,7 @@ sf::Vector2f calculatePressureForce(int i){
         pressure_force.y += densityToPressure(j) * gradient * particle_mass/particles[i].local_density * y_dir;
     }
     //cout << pressure_force.x << " " << pressure_force.y << "\n";
-    return pressure_force;
+    return 100.f *pressure_force;
 }
 
 void resolveBoundingBox(int i, sf::Vector2u window_size){
