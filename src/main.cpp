@@ -67,7 +67,7 @@ float smoothingKernel(double dst){
 
 float smoothingKernelDerivative(double dst){
     if (dst >= smoothing_radius)return 0.0;
-    return ((float) -30.f/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));
+    return (100.f * (float) -30.f/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));
 }
 /////////////////////////////////////////////////////////
 float calculateDensity(int i){
@@ -88,7 +88,12 @@ float densityToPressure(int j){
     return local_pressure;
 }
 
+float sharedPressure(int i, int j){
+    float pressurei = densityToPressure(particles[i].local_density);
+    float pressurej = densityToPressure(particles[j].local_density);
+    return ((pressurei + pressurej) / 2.f);
 
+}
 
 sf::Vector2f calculatePressureForce(int i){
     sf::Vector2f pressure_force;
@@ -109,10 +114,13 @@ sf::Vector2f calculatePressureForce(int i){
         float gradient = smoothingKernelDerivative(dst);
         float x_dir = x_offset/dst;
         float y_dir = y_offset/dst;
-        pressure_force.x += densityToPressure(j) * gradient * particle_mass/particles[j].local_density * x_dir;
-        pressure_force.y += densityToPressure(j) * gradient * particle_mass/particles[j].local_density * y_dir;
+        float shared_pressure = sharedPressure(i, j); 
+        //pressure_force.x += densityToPressure(j) * gradient * particle_mass/particles[j].local_density * x_dir;
+        //pressure_force.y += densityToPressure(j) * gradient * particle_mass/particles[j].local_density * y_dir; Newton's 3rd law implementation below
+        pressure_force.x += shared_pressure * gradient * particle_mass/particles[j].local_density * x_dir;
+        pressure_force.y += shared_pressure * gradient * particle_mass/particles[j].local_density * y_dir;
     }
-    return 100.f * pressure_force;
+    return 10.f * pressure_force;
 }
 /*
 void resolveBoundingBox(int i, sf::Vector2u window_size){
@@ -135,7 +143,7 @@ void resolveCollisions(int i, sf::Vector2u window_size){
         particles[i].position.y = clamp((int)particles[i].position.y, 0, (int)window_size.y);
         particles[i].velocity.y *= -1 * collision_damping;
     }
-    
+    /*
     for (int k = 0; k < particle_num; k++){
         if (i == k) continue;
         float x_offset = particles[i].position.x - particles[k].position.x;
@@ -146,7 +154,7 @@ void resolveCollisions(int i, sf::Vector2u window_size){
             particles[k].position.x += sqrt(correction / 2);
             particles[k].position.y += sqrt(correction / 2);
         }
-    }
+    }*/
 }
 
 /*
@@ -190,7 +198,7 @@ int main()
         
         for (int i = 0; i < particle_num; i++){
             //gravity step  
-            //resolveGravity(i);
+            resolveGravity(i);
             // window bounding box
             //resolveBoundingBox(i, window_size);
             //calculate densities
