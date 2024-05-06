@@ -14,20 +14,20 @@ using namespace std;
 const int particle_num = 1600; 
 const float particle_mass = 1.f;
 const int particle_radius = 5;
-const float collision_damping = 0.5f;
+const float collision_damping = 0.8f;
 const float pi = 3.141f;
-const float target_density = 0.001f;
+const float target_density = 0.003f;
 const float pressure_multiplier = 100.f;
-double smoothing_radius = 200.f;
-const float dt = 1.f/60.f;
-const float gravity = 500.f; 
+double smoothing_radius = 20.f;
+const float dt = 1.f/10.f;
+const float gravity = 1.f; 
 
 struct particle{
     sf::CircleShape droplet{particle_radius};
     sf::Vector2f position{0.f, 0.f};
     sf::Vector2f velocity{0.f, 0.f};
-    float local_density = 0.001f;
-    float local_pressure;
+    float local_density = 1.f;
+    float local_pressure = 1.f;
 };
 
 vector<particle> particles(particle_num);
@@ -42,12 +42,20 @@ void placeParticles(){
         particles[i].droplet.setFillColor(sf::Color::Cyan); // Remove after resolveColor is developed
     }
 }
+/*
+void placeParticles(sf::Vector2u window_size){
+    for (int i =0; i< particle_num; i++){
+        particles[i].position.x = rand() % window_size.x;
+        particles[i].position.y = rand() % window_size.y;
+        particles[i].droplet.setFillColor(sf::Color::Cyan);
+    }
+}*/
 
 void resolveGravity(int i){
     particles[i].velocity.y += gravity * dt;
 }
 
-/*
+
 float smoothingKernel(double dst){
     float volume = pi * (float)pow(smoothing_radius, 5.0)/10;  
     float value = max((float)0.0, (float)pow(smoothing_radius - dst, 3.0));
@@ -58,17 +66,7 @@ float smoothingKernelDerivative(double dst){
     if (dst >= smoothing_radius) return 0.0;
     return ( (float) -30/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));
 }
-Test other smoothing kernels below*/
-float smoothingKernel(double dst){
-    float volume = pi * (float)pow(smoothing_radius, 5.0)/10.f;  
-    float value = max((float)0.0, (float)pow(smoothing_radius- dst, 3.0));
-    return value/volume;
-}
-
-float smoothingKernelDerivative(double dst){
-    if (dst >= smoothing_radius)return 0.0;
-    return (100.f * (float) -30.f/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));
-}
+//Test other smoothing kernels below
 /////////////////////////////////////////////////////////
 float calculateDensity(int i){
     float density = 0.f;
@@ -92,7 +90,6 @@ float sharedPressure(int i, int j){
     float pressurei = densityToPressure(particles[i].local_density);
     float pressurej = densityToPressure(particles[j].local_density);
     return ((pressurei + pressurej) / 2.f);
-
 }
 
 sf::Vector2f calculatePressureForce(int i){
@@ -116,11 +113,11 @@ sf::Vector2f calculatePressureForce(int i){
         float y_dir = y_offset/dst;
         float shared_pressure = sharedPressure(i, j); 
         //pressure_force.x += densityToPressure(j) * gradient * particle_mass/particles[j].local_density * x_dir;
-        //pressure_force.y += densityToPressure(j) * gradient * particle_mass/particles[j].local_density * y_dir; Newton's 3rd law implementation below
+        //pressure_force.y += densityToPressure(j) * gradient * particle_mass/particles[j].local_density * y_dir;// Newton's 3rd law implementation below
         pressure_force.x += shared_pressure * gradient * particle_mass/particles[j].local_density * x_dir;
         pressure_force.y += shared_pressure * gradient * particle_mass/particles[j].local_density * y_dir;
     }
-    return 10.f * pressure_force;
+    return pressure_force;
 }
 /*
 void resolveBoundingBox(int i, sf::Vector2u window_size){
@@ -151,8 +148,8 @@ void resolveCollisions(int i, sf::Vector2u window_size){
         float total_offset = x_offset * x_offset + y_offset * y_offset;
         if(total_offset < 2*particle_radius){
             float correction = 2*particle_radius - total_offset;
-            particles[k].position.x += sqrt(correction / 2);
-            particles[k].position.y += sqrt(correction / 2);
+            particles[i].position.x += sqrt(correction / 2);
+            particles[i].position.y -= sqrt(correction / 2);
         }
     }*/
 }
@@ -176,9 +173,9 @@ int main()
     sf::RenderWindow window(sf::VideoMode(900, 900), "Smoothed Particle Hydrodynamics Simulation");
     window.setFramerateLimit(120);
     sf::View view = window.getDefaultView();
-
+    sf::Vector2u window_size = window.getSize();
     placeParticles();
-    //cout << calculateDensity(particles[800-20].position) << "\n"; //show that this makes the density roughly constant
+    cout << calculateDensity(985) << "\n"; //show that this makes the density roughly constant
     
     while (window.isOpen())
     {
@@ -197,8 +194,9 @@ int main()
         //TO-DO: Calculate and cache densities
         
         for (int i = 0; i < particle_num; i++){
+            resolveCollisions(i, window_size);
             //gravity step  
-            resolveGravity(i);
+            //resolveGravity(i);
             // window bounding box
             //resolveBoundingBox(i, window_size);
             //calculate densities
@@ -219,7 +217,7 @@ int main()
             particles[i].position.x += particles[i].velocity.x * dt;
             particles[i].position.y += particles[i].velocity.y * dt;
             particles[i].droplet.setPosition(particles[i].position.x-particle_radius, particles[i].position.y-particle_radius);
-            resolveCollisions(i, window_size);
+            
             window.draw(particles[i].droplet);
         }
         window.display();
