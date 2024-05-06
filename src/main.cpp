@@ -11,16 +11,18 @@ using namespace std;
 
  //Initialize fluid-related
 
-const int particle_num = 1600; 
+const int particle_num = 1600; //1600, 400, 1600
 const float particle_mass = 1.f;
 const int particle_radius = 5;
 const float collision_damping = 0.8f;
 const float pi = 3.141f;
-const float target_density = 0.003f;
-const float pressure_multiplier = 100.f;
-double smoothing_radius = 20.f;
-const float dt = 1.f/10.f;
-const float gravity = 1.f; 
+const float target_density = 0.001f;//0.001f, 0.00005, 0.001
+const float pressure_multiplier = 50.f;//2500, 2500, 50
+double smoothing_radius = 50.f; //20, 100, 50
+const float dt = 1.f/60.f;
+const float gravity = 10.f; //1, 1, 25
+
+//3rd one most realistic due to liquid levelling itself out :)
 
 struct particle{
     sf::CircleShape droplet{particle_radius};
@@ -28,10 +30,11 @@ struct particle{
     sf::Vector2f velocity{0.f, 0.f};
     float local_density = 1.f;
     float local_pressure = 1.f;
+    sf::Vector2f predicted_position{0.f, 0.f};
 };
 
 vector<particle> particles(particle_num);
-
+/*
 void placeParticles(){
     int particlesPerRow = sqrt(particle_num);
     int particlesPerColumn = (particle_num - 1)/particlesPerRow + 1;
@@ -42,19 +45,24 @@ void placeParticles(){
         particles[i].droplet.setFillColor(sf::Color::Cyan); // Remove after resolveColor is developed
     }
 }
-/*
+*/
 void placeParticles(sf::Vector2u window_size){
     for (int i =0; i< particle_num; i++){
         particles[i].position.x = rand() % window_size.x;
         particles[i].position.y = rand() % window_size.y;
         particles[i].droplet.setFillColor(sf::Color::Cyan);
     }
-}*/
+}
 
 void resolveGravity(int i){
     particles[i].velocity.y += gravity * dt;
 }
 
+void predictPositions(int i){
+    particles[i].predicted_position.x = particles[i].position.x + particles[i].velocity.x * dt;
+    particles[i].predicted_position.y = particles[i].position.y + particles[i].velocity.y * dt;
+
+}
 
 float smoothingKernel(double dst){
     float volume = pi * (float)pow(smoothing_radius, 5.0)/10;  
@@ -64,7 +72,7 @@ float smoothingKernel(double dst){
 
 float smoothingKernelDerivative(double dst){
     if (dst >= smoothing_radius) return 0.0;
-    return ( (float) -30/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));
+    return ( 100.f * (float) -30/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));
 }
 //Test other smoothing kernels below
 /////////////////////////////////////////////////////////
@@ -73,7 +81,7 @@ float calculateDensity(int i){
     //#pragma omp parallel for num_threads(9) 
     for (int j =0; j < particle_num; j++){
        // float dst = sqrt(pow((double)(particles[j].position.x - sample_point.x), 2.0) + pow((double)(particles[j].position.y - sample_point.y), 2.0));
-        float dst = sqrt((particles[j].position.x - particles[i].position.x) * (particles[j].position.x - particles[i].position.x)  + (particles[j].position.y - particles[i].position.y) * (particles[j].position.y - particles[i].position.y));
+        float dst = sqrt((particles[j].predicted_position.x - particles[i].predicted_position.x) * (particles[j].predicted_position.x - particles[i].predicted_position.x)  + (particles[j].predicted_position.y - particles[i].predicted_position.y) * (particles[j].predicted_position.y - particles[i].predicted_position.y));
         float influence = smoothingKernel(dst);
         density += particle_mass * influence; 
     }
@@ -99,13 +107,13 @@ sf::Vector2f calculatePressureForce(int i){
         if (i == j) continue;
         float x_offset;
         float y_offset;
-        if (particles[i].position == particles[j].position){
+        if (particles[i].predicted_position == particles[j].predicted_position){
             x_offset = (float)1+ (rand() % 20);
             y_offset = (float)1+ (rand() % 20);
         }
         else{
-            x_offset = particles[j].position.x - particles[i].position.x;
-            y_offset = particles[j].position.y - particles[i].position.y; 
+            x_offset = particles[j].predicted_position.x - particles[i].predicted_position.x;
+            y_offset = particles[j].predicted_position.y - particles[i].predicted_position.y; 
         }
         double dst = sqrt(abs(x_offset * x_offset + y_offset * y_offset));
         float gradient = smoothingKernelDerivative(dst);
@@ -174,8 +182,8 @@ int main()
     window.setFramerateLimit(120);
     sf::View view = window.getDefaultView();
     sf::Vector2u window_size = window.getSize();
-    placeParticles();
-    cout << calculateDensity(985) << "\n"; //show that this makes the density roughly constant
+    placeParticles(window_size);
+    //cout << calculateDensity(985) << "\n"; //show that this makes the density roughly constant
     
     while (window.isOpen())
     {
@@ -196,7 +204,9 @@ int main()
         for (int i = 0; i < particle_num; i++){
             resolveCollisions(i, window_size);
             //gravity step  
-            //resolveGravity(i);
+            resolveGravity(i);
+            //Predict next positions
+            predictPositions(i);
             // window bounding box
             //resolveBoundingBox(i, window_size);
             //calculate densities
@@ -217,6 +227,7 @@ int main()
             particles[i].position.x += particles[i].velocity.x * dt;
             particles[i].position.y += particles[i].velocity.y * dt;
             particles[i].droplet.setPosition(particles[i].position.x-particle_radius, particles[i].position.y-particle_radius);
+            cout<<particles[i].local_density<<"\n";
             
             window.draw(particles[i].droplet);
         }
