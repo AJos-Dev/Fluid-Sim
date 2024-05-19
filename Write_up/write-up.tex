@@ -16,7 +16,10 @@
 \usepackage{enumitem}
 \usepackage{physics}
 \usepackage{pgfplots}
+\usepackage{listings}
 \usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{ {./Media/} }
 \pgfplotsset{width=7cm, compat=1.9}
 \newlist{worddefs}{description}{1}
 \setlist[worddefs]{font=\bfseries, labelindent=\parindent, leftmargin=6em, style=sameline}
@@ -50,16 +53,18 @@
 \pagebreak
 \subfile{theoretical_model.tex}
 \pagebreak
+\end{multicols}
 \subfile{development.tex}
 \pagebreak
 \subfile{evaluation.tex}
 \pagebreak
 
 \newpage
+\begin{multicols}{2}
 \nocite{*}
 \bibliography{bibfile.bib}
-\bibliographystyle{IEEEtran}
 \end{multicols}
+\bibliographystyle{IEEEtran}
 \end{document}
 
 

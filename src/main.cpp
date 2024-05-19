@@ -11,16 +11,17 @@ using namespace std;
 
  //Initialize fluid-related
 
-const int particle_num = 1600; //1600, 400, 1600
+//4th preset is if pressure force is -ve
+const int particle_num = 625; //1600, 400, 1600, 625
 const float particle_mass = 1.f;
 const int particle_radius = 5;
 const float collision_damping = 0.8f;
 const float pi = 3.141f;
-const float target_density = 0.001f;//0.001f, 0.00005, 0.001
-const float pressure_multiplier = 50.f;//2500, 2500, 50
-double smoothing_radius = 50.f; //20, 100, 50
+const float target_density = 1.f;//0.001f, 0.00005, 0.001, 1.f
+const float pressure_multiplier = 10.f;//2500, 2500, 50, 10
+double smoothing_radius = 200.f; //20, 100, 50, 200
 const float dt = 1.f/60.f;
-const float gravity = 10.f; //1, 1, 25
+const float gravity = 10.f; //1, 1, 25, 10
 
 //3rd one most realistic due to liquid levelling itself out :)
 
@@ -34,7 +35,7 @@ struct particle{
 };
 
 vector<particle> particles(particle_num);
-/*
+
 void placeParticles(){
     int particlesPerRow = sqrt(particle_num);
     int particlesPerColumn = (particle_num - 1)/particlesPerRow + 1;
@@ -45,14 +46,14 @@ void placeParticles(){
         particles[i].droplet.setFillColor(sf::Color::Cyan); // Remove after resolveColor is developed
     }
 }
-*/
+/*
 void placeParticles(sf::Vector2u window_size){
     for (int i =0; i< particle_num; i++){
         particles[i].position.x = rand() % window_size.x;
         particles[i].position.y = rand() % window_size.y;
         particles[i].droplet.setFillColor(sf::Color::Cyan);
     }
-}
+}*/
 
 void resolveGravity(int i){
     particles[i].velocity.y += gravity * dt;
@@ -65,14 +66,14 @@ void predictPositions(int i){
 }
 
 float smoothingKernel(double dst){
-    float volume = pi * (float)pow(smoothing_radius, 5.0)/10;  
+    float volume = pi * (float)(pow(smoothing_radius, 5.0)/10);  
     float value = max((float)0.0, (float)pow(smoothing_radius - dst, 3.0));
     return value/volume;
 }
 
 float smoothingKernelDerivative(double dst){
     if (dst >= smoothing_radius) return 0.0;
-    return ( 100.f * (float) -30/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));
+    return ( 100 *(float) -30/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));// 100.0f * was here before
 }
 //Test other smoothing kernels below
 /////////////////////////////////////////////////////////
@@ -97,7 +98,7 @@ float densityToPressure(int j){
 float sharedPressure(int i, int j){
     float pressurei = densityToPressure(particles[i].local_density);
     float pressurej = densityToPressure(particles[j].local_density);
-    return ((pressurei + pressurej) / 2.f);
+    return -((pressurei + pressurej) / 2.f);
 }
 
 sf::Vector2f calculatePressureForce(int i){
@@ -182,7 +183,8 @@ int main()
     window.setFramerateLimit(120);
     sf::View view = window.getDefaultView();
     sf::Vector2u window_size = window.getSize();
-    placeParticles(window_size);
+    //placeParticles(window_size);
+    placeParticles();
     //cout << calculateDensity(985) << "\n"; //show that this makes the density roughly constant
     
     while (window.isOpen())

@@ -85,6 +85,7 @@ W_{\text{spiky}}(r, h) &= \displaystyle \frac{15}{\pi h^6} (h-r)^3 \\
 
 After finding the local density at the location for each particle, the local density needs to be compared to a constant target density to get a density error value which is multiplied by some constant to get our Pressure Force. By Newton's second law, $F = ma$, we can find the acceleration of the particle and apply this to the particles within the simulation step. Furthermore, Newton's Third Law of Motion must also be applied in this context, where if a particle exerts a pressure force, it must experience an equal and opposite reaction force.
 
-\subsection{Viscosity}
+\subsection{Predicted Position optimisation}
 
+An interesting paper by B. Solenthaler and R. Pajarola \cite{solenthaler} uses the current velocities of particles to determine a predicted position and uses predicted positions in the density and pressure calculations instead of current particle positions. This Predictive-Corrective Incompressible SPH (PCISPH) model allows for greater enforcement on incompressibility whilst having low computational cost per update with a large timestep, which is useful as other methods of enforcing incompressibility rely on smaller timesteps that are computationally heavy.
 \end{document}
