@@ -1,4 +1,6 @@
 //"g++ main.cpp -o fluid_sim -lsfml-graphics -lsfml-window -lsfml-system -fopenmp -Ofast" to compile in terminal
+#include <imgui-SFML.h>
+#include <imgui.h>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics.hpp>
 #include<iostream>
@@ -12,16 +14,16 @@ using namespace std;
  //Initialize fluid-related
 
 //4th preset is if pressure force is -ve
-const int particle_num = 625; //1600, 400, 1600, 625
+static int particle_num = 1600; //1600, 400, 1600, 625
 const float particle_mass = 1.f;
 const int particle_radius = 5;
 const float collision_damping = 0.8f;
 const float pi = 3.141f;
-const float target_density = 1.f;//0.001f, 0.00005, 0.001, 1.f
-const float pressure_multiplier = 10.f;//2500, 2500, 50, 10
-double smoothing_radius = 200.f; //20, 100, 50, 200
+static float target_density = 0.01f;//0.001f, 0.00005, 0.001, 1.f
+static float pressure_multiplier = 200.f;//2500, 2500, 50, 10
+static float smoothing_radius = 50.f; //20, 100, 50, 200
 const float dt = 1.f/60.f;
-const float gravity = 10.f; //1, 1, 25, 10
+static float gravity = 9.81f; //1, 1, 25, 10
 
 //3rd one most realistic due to liquid levelling itself out :)
 
@@ -126,7 +128,7 @@ sf::Vector2f calculatePressureForce(int i){
         pressure_force.x += shared_pressure * gradient * particle_mass/particles[j].local_density * x_dir;
         pressure_force.y += shared_pressure * gradient * particle_mass/particles[j].local_density * y_dir;
     }
-    return pressure_force;
+    return pressure_force * 2.f;
 }
 /*
 void resolveBoundingBox(int i, sf::Vector2u window_size){
@@ -143,11 +145,11 @@ void resolveBoundingBox(int i, sf::Vector2u window_size){
 void resolveCollisions(int i, sf::Vector2u window_size){
     if (particles[i].position.x > window_size.x || particles[i].position.x < 0){
         particles[i].position.x = clamp((int)particles[i].position.x, 0, (int)window_size.x);
-        particles[i].velocity.x *= -1 * collision_damping;
+        particles[i].velocity.x *= -1;
     }
     if (particles[i].position.y >= window_size.y || particles[i].position.y <= 0){
         particles[i].position.y = clamp((int)particles[i].position.y, 0, (int)window_size.y);
-        particles[i].velocity.y *= -1 * collision_damping;
+        particles[i].velocity.y *= -1;
     }
     /*
     for (int k = 0; k < particle_num; k++){
@@ -186,12 +188,16 @@ int main()
     //placeParticles(window_size);
     placeParticles();
     //cout << calculateDensity(985) << "\n"; //show that this makes the density roughly constant
-    
+    ImGui::SFML::Init(window);
+
+
+    sf::Clock deltaClock;
     while (window.isOpen())
     {
         sf::Event event;
         while (window.pollEvent(event))
         {
+            ImGui::SFML::ProcessEvent(event);
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::Resized){
@@ -200,8 +206,17 @@ int main()
             }
         }
         sf::Vector2u window_size = window.getSize();
+        ImGui::SFML::Update(window, deltaClock.restart());
         window.clear();
         //TO-DO: Calculate and cache densities
+
+        ImGui::Begin("Hello");
+        ImGui::SliderFloat("Gravity", &gravity, 0.f, 100.f);
+        ImGui::SliderFloat("Pressure Multiplier", &pressure_multiplier, 0.f, 1000.f);
+        ImGui::SliderFloat("Target Density", &target_density, 0.f, 1.f);
+        ImGui::SliderInt("Particle Num", &particle_num, 1, 1600);
+        ImGui::SliderFloat("Smoothing Radius", &smoothing_radius, 10, 200);
+        ImGui::End();
         
         for (int i = 0; i < particle_num; i++){
             resolveCollisions(i, window_size);
@@ -229,12 +244,15 @@ int main()
             particles[i].position.x += particles[i].velocity.x * dt;
             particles[i].position.y += particles[i].velocity.y * dt;
             particles[i].droplet.setPosition(particles[i].position.x-particle_radius, particles[i].position.y-particle_radius);
-            cout<<particles[i].local_density<<"\n";
+            //cout<<particles[i].local_density<<"\n";
             
             window.draw(particles[i].droplet);
         }
+        ImGui::SFML::Render(window);
+
         window.display();
     }
+     ImGui::SFML::Shutdown();
 
     return 0;
 }
