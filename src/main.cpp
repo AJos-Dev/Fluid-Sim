@@ -20,10 +20,10 @@ const int particle_radius = 5;
 const float collision_damping = 0.8f;
 const float pi = 3.141f;
 static float target_density = 0.01f;//0.001f, 0.00005, 0.001, 1.f
-static float pressure_multiplier = 200.f;//2500, 2500, 50, 10
+static float pressure_multiplier = 50.f;//2500, 2500, 50, 10
 static float smoothing_radius = 50.f; //20, 100, 50, 200
 const float dt = 1.f/60.f;
-static float gravity = 9.81f; //1, 1, 25, 10
+static float gravity = 25.f; //1, 1, 25, 10
 
 //3rd one most realistic due to liquid levelling itself out :)
 
@@ -45,7 +45,7 @@ void placeParticles(){
     for (int i = 0; i < particle_num; i++){
         particles[i].position.x = (i % particlesPerRow + particlesPerRow / 2.5f +0.5f) * spacing;
         particles[i].position.y = (i / particlesPerRow + particlesPerColumn / 2.5f +0.5f) * spacing;
-        particles[i].droplet.setFillColor(sf::Color::Cyan); // Remove after resolveColor is developed
+        //particles[i].droplet.setFillColor(sf::Color::Cyan); // Remove after resolveColor is developed
     }
 }
 /*
@@ -75,7 +75,7 @@ float smoothingKernel(double dst){
 
 float smoothingKernelDerivative(double dst){
     if (dst >= smoothing_radius) return 0.0;
-    return ( 100 *(float) -30/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));// 100.0f * was here before
+    return ((float) -30/(pi * pow(smoothing_radius, 5)) * pow(smoothing_radius - dst, 2));// 100.0f * was here before
 }
 //Test other smoothing kernels below
 /////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ float calculateDensity(int i){
         float influence = smoothingKernel(dst);
         density += particle_mass * influence; 
     }
-    return density;
+    return -density;
 }
 
 float densityToPressure(int j){
@@ -100,7 +100,7 @@ float densityToPressure(int j){
 float sharedPressure(int i, int j){
     float pressurei = densityToPressure(particles[i].local_density);
     float pressurej = densityToPressure(particles[j].local_density);
-    return -((pressurei + pressurej) / 2.f);
+    return (-(pressurei + pressurej) / 2.f);
 }
 
 sf::Vector2f calculatePressureForce(int i){
@@ -165,8 +165,9 @@ void resolveCollisions(int i, sf::Vector2u window_size){
     }*/
 }
 
+
+//TO-DO!
 /*
-TO-DO!
 void resolveColor(int i){
     if (abs(particles[i].velocity.x + particles[i].velocity.y) > 50){
         float offset = particles[i].velocity.x + particles[i].velocity.y - 50;
@@ -239,7 +240,7 @@ int main()
             particles[i].velocity.x += pressure_acceleration.x * dt;
             particles[i].velocity.y += pressure_acceleration.y * dt;
             //resolve colour
-            //resolveColor(i); add at the end*/
+            //resolveColor(i);// add at the end
             //set particle positions with radius offset 
             particles[i].position.x += particles[i].velocity.x * dt;
             particles[i].position.y += particles[i].velocity.y * dt;

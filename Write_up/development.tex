@@ -5,14 +5,6 @@
 \subsection{Boilerplate code}
 
 The beginning of my implementation involved the boilerplate minimal code required for my graphics library SFML to be setup as well as including key libraries I will need throughout the project.
-\lstset{language=C++,
-                breaklines=true,
-                basicstyle=\ttfamily,
-                keywordstyle=\color{blue}\ttfamily,
-                stringstyle=\color{red}\ttfamily,
-                commentstyle=\color{green}\ttfamily,
-                morecomment=[l][\color{magenta}]{\#}
-}
 \begin{lstlisting}
 
 #include <SFML/System/Vector2.hpp>
@@ -40,7 +32,8 @@ int main()
                 window.close();
             if (event.type == sf::Event::Resized){
                 sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
-                window.setView(sf::View(visibleArea));
+                window.setView(sf::View(
+                visibleArea));
             }
         }
         sf::Vector2u window_size = window.getSize();
@@ -79,7 +72,8 @@ void placeParticles(){
     for (int i = 0; i < particle_num; i++){
         particles[i].position.x = (i % particlesPerRow + particlesPerRow / 2.5f +0.5f) * spacing;
         particles[i].position.y = (i / particlesPerRow + particlesPerColumn / 2.5f +0.5f) * spacing;
-        particles[i].droplet.setFillColor(sf::Color::Cyan);
+        particles[i].droplet
+        .setFillColor(sf::Color::Cyan);
     }
 }
 
@@ -91,7 +85,6 @@ void placeParticles(){
 \caption{Particles placed in an orderly fashion on the screen}
 \end{figure}
 
-\newpage
 \subsection{Simulation loop}
 In order to calculate new positions of particles, we need to loop over them every step of the simulation to calculate its new position vector using its current velocity and acceleration vectors and multiplying by $dt$, our change in time per simulation step and then draw them. We can begin updating these by implementing gravity first.
 \begin{lstlisting}
@@ -109,7 +102,10 @@ for (int i = 0; i < particle_num; i++){
     resolveGravity(i);
     particles[i].position.x += particles[i].velocity.x * dt;
     particles[i].position.y += particles[i].velocity.y * dt;
-    particles[i].droplet.setPosition(particles[i].position.x-particle_radius, particles[i].position.y-particle_radius);
+    particles[i].droplet
+    .setPosition(particles[i]
+    .position.x-particle_radius,
+    particles[i].position.y-particle_radius);
 
     //Draw particles
     window.draw(particles[i].droplet);

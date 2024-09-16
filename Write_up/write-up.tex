@@ -23,6 +23,14 @@
 \pgfplotsset{width=7cm, compat=1.9}
 \newlist{worddefs}{description}{1}
 \setlist[worddefs]{font=\bfseries, labelindent=\parindent, leftmargin=6em, style=sameline}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb, language=C++,
+aboveskip=3mm, belowskip=3mm, showstringspaces=false, columns=flexible,
+basicstyle={\small\ttfamily}, numbers=none, numberstyle=\tiny\color{gray},
+keywordstyle=\color{blue}, commentstyle=\color{dkgreen},
+stringstyle=\color{mauve}, breaklines=true, breakatwhitespace=true, tabsize=3 }
 
 %\sectionfont{\fontsize{11}{11}\selectfont}
 %\subsectionfont{\fontsize{11}{11}\selectfont}
@@ -53,14 +61,12 @@
 \pagebreak
 \subfile{theoretical_model.tex}
 \pagebreak
-\end{multicols}
 \subfile{development.tex}
 \pagebreak
 \subfile{evaluation.tex}
 \pagebreak
 
 \newpage
-\begin{multicols}{2}
 \nocite{*}
 \bibliography{bibfile.bib}
 \end{multicols}
