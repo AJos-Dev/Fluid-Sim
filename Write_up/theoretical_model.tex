@@ -60,15 +60,23 @@ $
 \end{axis}
 \end{tikzpicture}
 
-$W_{\text{spiky}}(r, h)$ is used specifically for pressure computations. Its gradient is high when $r$ is close to $0$, generating the required repulsion forces for pressure calculations and therefore making it the superior choice for my simulation. Note that for the simulation, the influence value returned will also be divided by the volume of our kernel, this keeps values consistent regardless of our values of $h$.
+$W_{\text{spiky}}(r, h)$ is used specifically for pressure computations. Its gradient is high when $r$ is close to $0$, generating the required repulsion forces for pressure calculations and therefore making it the superior choice for my simulation. However, the $h^6$ term is computationally challenging to calculate for every particle, therefore a more appropriate smoothing kernel for our uses would be a variation of $W_{\text{spiky}}(r, h)$ where $W(r, h) = (h-r)^3$ if $0\leq r \leq h$, 0 otherwise.
+
+For the simulation, the influence value returned will also be divided by the volume of our kernel, this keeps values consistent regardless of our values of $h$.
 
 \subsection{Interpolation Equation}
 \hypertarget{Interpolation Equation}
-The Interpolation Equation is responsible for calculating a scalar quantity $A$ at a location $r$ by a weighted sum of contributions from all the particles within our simulation. This equation will be used to calculate density which will indicate the pressure and therefore the net force a particle observes.
+The Interpolation Equation is responsible for calculating a scalar quantity $A$ at a location $r$ by a weighted sum of contributions from all the particles within our simulation. It sits at the heart of this project. This equation will be used to calculate density and viscosity which will indicate the pressure and therefore the net force a particle observes.
 \begin{center}
 $
-    A_s(r) = \sum_{j} m_j \frac{A_j}{\rho_j}W(r-r_j, h)
+   A_s(r) = \sum_{j} m_j \frac{A_j}{\rho_j}W(r-r_j, h)
 $
+
+$A_s$ is the property we want to calculate,\\
+$m_j$ is the mass of the particle,\\
+$A_J$ is the value of that property of particle with index $j$,\\
+$\rho_j$ is the local density, \\
+$W(r-r_j, h)$ is the value of the smoothing kernel with the distance between the 2 particles being $r-r_j$.
 \cite{muller}
 \end{center}
 
@@ -77,15 +85,17 @@ $
 The simulation step updates the position vectors of the particles according to the rate of change of the properties every frame. We can calculate this rate of change by taking the derivative of our smoothing kernel with respect to r:
 
 \begin{align*}
-W_{\text{spiky}}(r, h) &= \displaystyle \frac{15}{\pi h^6} (h-r)^3 \\
-\pdv{W}{r} &= -\frac{45}{\pi h^6} (h-r)^2
+W(r, h) &= (h-r)^3 \\
+\pdv{W}{r} &= -3(h-r)^2
 \end{align*}
 
 \subsection{Pressure Forces and Newton's Third Law}
 
-After finding the local density at the location for each particle, the local density needs to be compared to a constant target density to get a density error value which is multiplied by some constant to get our Pressure Force. By Newton's second law, $F = ma$, we can find the acceleration of the particle and apply this to the particles within the simulation step. Furthermore, Newton's Third Law of Motion must also be applied in this context, where if a particle exerts a pressure force, it must experience an equal and opposite reaction force.
+Clavet \textit{et al.} \cite{clavet} mention calculating a pseudo-pressure $P_i$, proportional to the difference between the local density $\rho_i$ and the current density $\rho_0$, governed by the equation $P_i = k(\rho_i - \rho_0)$, where $k$ is a constant, which will be referred to as the pressure multipler, governing the stiffness of the fluid. We then apply the SPG gradient optimisation to get a value for the pressure force. By Newton's second law, $F = ma$, we can find the acceleration of the particle and apply this to the particles within the simulation step. Furthermore, Newton's Third Law of Motion must also be applied in this context, where if a particle exerts a pressure force, it must experience an equal and opposite reaction force.
+
+\subsection{Viscosity}
+The nature of this project would lead you to assume that viscosity is calculated using the interpolation equation. However, Koschier \textit{et al.}\cite{koschier} mention there are major issues with this approach. The most significant issue is that this approach is sensitive to particle disorder. An proposed alternative which is viable for the scope of this project is to use ``one derivative using SPH and the second one using finite differences'' \cite{koschier}. Following from Sebastian Lague's implementation, the viscosity force is calculated by taking the difference in velocities, multiplying by the influence from a viscosity kernel and then multiplying by an arbitary scalar value. For my implementation, I will settle for the smoothing kernel for viscosity for simplicity instead of the suggested sharper viscosity kernel as I am cautious of overall compute time.
 
 \subsection{Predicted Position optimisation}
-
 An interesting paper by B. Solenthaler and R. Pajarola \cite{solenthaler} uses the current velocities of particles to determine a predicted position and uses predicted positions in the density and pressure calculations instead of current particle positions. This Predictive-Corrective Incompressible SPH (PCISPH) model allows for greater enforcement on incompressibility whilst having low computational cost per update with a large timestep, which is useful as other methods of enforcing incompressibility rely on smaller timesteps that are computationally heavy.
 \end{document}
