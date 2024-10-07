@@ -1,5 +1,6 @@
 //"g++ main.cpp -o fluid_sim -lsfml-graphics -lsfml-window -lsfml-system -fopenmp -Ofast" to compile in terminal
 #include <imgui-SFML.h>
+#include <SFML/Window/Mouse.hpp>
 #include <imgui.h>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics.hpp>
@@ -11,7 +12,7 @@
 
 using namespace std;
 
-static int particle_num = 750; //1600, 400, 1600, 625
+static int particle_num = 1600; //1600, 400, 1600, 625
 static float particle_mass = 30.f;
 const int particle_radius = 5;
 const float collision_damping = 0.8f;
@@ -22,7 +23,8 @@ static float smoothing_radius = 70.f; //20, 100, 50, 200
 const float dt = 1.f/60.f;
 static float gravity = 0.f; //1, 1, 25, 10
 static int framerate = 60;
-int viscosity_strength = 10.f;
+static int viscosity_strength = 10.f;
+static bool interactive = false;
 
 struct particle{
     sf::CircleShape droplet{particle_radius};
@@ -168,6 +170,15 @@ void resolveNew(int i, float vel){
     particles[i].droplet.setFillColor(sf::Color(r, g, b));
 }
 
+sf::Vector2f interactiveForce(sf::Vector2i position, int i, float repulsive){
+    sf::Vector2f force;
+    float dst = (particles[i].position.x - position.x) * (particles[i].position.x - position.x) + (particles[i].position.y - position.y) * (particles[i].position.y - position.y);
+    if (dst<=10000){
+        force += (((sf::Vector2f)position) - particles[i].predicted_position) * (100-sqrt(dst))/4.f * repulsive;
+    }
+    return force;
+}
+
 int main()
 {
     //Initialize SFML
@@ -177,8 +188,8 @@ int main()
     sf::Vector2u window_size = window.getSize();
     placeParticles();   
     ImGui::SFML::Init(window);
-    bool paused = false;
-
+    sf::Vector2i position;
+    float repulsive = 1;
     sf::Clock deltaClock;
     while (window.isOpen())
     {
@@ -192,8 +203,19 @@ int main()
                 sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-                paused = !paused;
+            if (event.type == sf::Event::MouseButtonPressed){
+                interactive = true;
+                if (event.mouseButton.button == sf::Mouse::Left){
+                    repulsive = 1.f;
+                }
+                else{
+                    repulsive = -1.f;
+                }
+                
+            }
+            if (event.type == sf::Event::MouseButtonReleased){
+                interactive = false;
+            }
         }
         sf::Vector2u window_size = window.getSize();
         ImGui::SFML::Update(window, deltaClock.restart());
@@ -207,9 +229,12 @@ int main()
         ImGui::SliderFloat("Pressure Multiplier", &pressure_multiplier, 0.f, 1000.f);
         ImGui::SliderFloat("Smoothing Radius", &smoothing_radius, 10, 200);
         ImGui::SliderFloat("Gravity", &gravity, 0.f, 100.f);
+        ImGui::SliderInt("Viscosity Strength", &viscosity_strength, 0, 100);
         ImGui::SliderInt("Framerate", &framerate, 60, 1200);
+        //if (ImGui::Button("Toggle Interaction")) interactive = !(interactive);
         ImGui::End();
         sf::CircleShape circle;
+        position =  sf::Mouse::getPosition(window);
         for (int i = 0; i < particle_num; i++){
             resolveCollisions(i, window_size);
             //gravity step  
@@ -223,11 +248,14 @@ int main()
             particles[i].local_pressure = densityToPressure(i);
             //Calculate pressure forces and acceleration
             sf::Vector2f pressure_force = calculatePressureForce(i);
+            if (interactive){
+                pressure_force += interactiveForce(position, i, repulsive);
+            }
             sf::Vector2f pressure_acceleration; 
             pressure_acceleration.x = pressure_force.x/particles[i].local_density;
             pressure_acceleration.y = pressure_force.y/particles[i].local_density;
             //Calculate acceleration due to viscosity
-            //pressure_acceleration += calculateViscosityAcceleration(i);
+            pressure_acceleration += calculateViscosityAcceleration(i);
             //calculate velocity
             particles[i].velocity.x += pressure_acceleration.x * dt;
             particles[i].velocity.y += pressure_acceleration.y * dt;
