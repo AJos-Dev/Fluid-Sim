@@ -229,7 +229,6 @@ int main()
         ImGui::SliderFloat("Pressure Multiplier", &pressure_multiplier, 0.f, 1000.f);
         ImGui::SliderFloat("Smoothing Radius", &smoothing_radius, 10, 200);
         ImGui::SliderFloat("Gravity", &gravity, 0.f, 100.f);
-        ImGui::SliderInt("Viscosity Strength", &viscosity_strength, 0, 100);
         ImGui::SliderInt("Framerate", &framerate, 60, 1200);
         //if (ImGui::Button("Toggle Interaction")) interactive = !(interactive);
         ImGui::End();
@@ -255,7 +254,7 @@ int main()
             pressure_acceleration.x = pressure_force.x/particles[i].local_density;
             pressure_acceleration.y = pressure_force.y/particles[i].local_density;
             //Calculate acceleration due to viscosity
-            pressure_acceleration += calculateViscosityAcceleration(i);
+            //pressure_acceleration += calculateViscosityAcceleration(i);
             //calculate velocity
             particles[i].velocity.x += pressure_acceleration.x * dt;
             particles[i].velocity.y += pressure_acceleration.y * dt;
