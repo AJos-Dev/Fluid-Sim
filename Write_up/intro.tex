@@ -9,7 +9,7 @@ Simulating fluids involves observation of fluid phenomena such as wind, weather,
 
 \subsection{Motivation}
 
-My motivation for this project stems from the work of Sebastian Lague \cite{Lague}, a games developer who shares his exemplar work on \href{https://github.com/}{Github} and through digital media on \href{https://youtube.com}{YouTube}. Through his work, I was introduced to the concept of Smoothed Particle Hydrodynamics in the Computer Graphics community and was given great insight into the expectations from a project such as this. Further reading, especially into the sources of Lague, piqued my interest and only reinforced the idea of undertaking this concept because it provided the overlap between Mathematics, Physics and Computer Science, it was far beyond the scope of the A level curriculum but most importantly it provided a means to challenge, extend and implement new knowledge in a field which I plan to undertake in the future.
+My motivation for this project stems from the work of Sebastian Lague \cite{Lague}, a graphics developer who shares his exemplar work on \href{https://github.com/}{Github} and through digital media on \href{https://youtube.com}{YouTube}. Through his work, I was introduced to the concept of Smoothed Particle Hydrodynamics in the Computer Graphics community and was given great insight into its implementation in industry. Further reading, especially into the sources of Lague, piqued my interest and only reinforced the idea of undertaking this concept because it provided the overlap between Mathematics, Physics and Computer Science, it was far beyond the scope of the A level curriculum but most importantly it provided a means to challenge, extend and implement new knowledge in a field which I plan to undertake in the future.
 
 \subsection{Definitions}
 In this section, I provide clear and concise definitions for the key terms essential to understanding the context and methods presented in this paper.
@@ -17,10 +17,13 @@ In this section, I provide clear and concise definitions for the key terms essen
  \item [Computer Graphics.] A technology that generates images and videos on a computer screen, also referred to as CG.
  \item [Simulation.] Imitation of a situation or process.
  \item [Frame.] A single image which makes up a collection of images for an animation.
- \item[Render.] The process of generating a photorealistic or non-photorealistic image from a 2D or 3D model
+ \item[Render.] The process of generating a photorealistic or non-photorealistic image from a 2D or 3D model.
+ \item[CPU.] The Central Processing Unit (CPU) is the primary component of a computer that acts as its “control center".
+ \item[GPU.] The Graphics Processing Unit (GPU) is a specialized electronic circuit  designed for digital image processing and to accelerate computer graphics calculations.
  \item [Algorithm.] A set of instructions used to solve a particular problem or perform a specific task.
  \item [Pseudocode.] Writing an algorithm in plain English for design purposes.
  \item[Compute time.] The time required for a computer system to perform a specific task or calculation.
+ \item [Debug.] The process of finding and fixing errors (bugs) in source code.
  \item [Optimisation.] Modifying an algorithm or software to reduce the usage of computer resources or compute time.
  \item [Lagrangian.] A particle based approach to simulation.
  \item[Eulerian.] A grid based approach to simulation.
@@ -28,10 +31,11 @@ In this section, I provide clear and concise definitions for the key terms essen
  \item[Acceleration.] The rate of change of velocity.
  \item[Force.] An influence which causes an object to accelerate.
  \item[Friction.] A force resisting the relative motion of an object.
- \item [Fluid.] Any substance which flows due to applied forces, namely Liquids and Gasses.
+ \item[Kinetic energy.]
+ \item[Intermolecular Forces.]
+ \item [Fluid.] Any substance which flows due to applied forces, namely liquids and gasses.
  \item [Liquid.] A type of fluid which takes the shape of any container or vessel it is stored within.
  \item[Advection.] The horizontal movement of a mass of fluid.
- \item[Incompressible.]
  \item[Mass.] The measure of the amount of matter in a system.
  \item[Density.] The compactness of a substance, or the mass per unit volume.
  \item[Pressure.] The physical force exerted on an object by something in contact with it, or the force per unit area.
@@ -52,14 +56,22 @@ I plan to code a semi-realistic 2-D animation of a fluid in the programming lang
 \subsection{Success Criteria}
 The success criteria is as follows:
 \begin{itemize}
- \item Implement all aspects of the Theoretical model within the animation where every section behaves as intended in C++.
- \item Have an animation of a semi-realistic 2-D incompressible fluid where the window can be resized to interact with the simulation.
- \item Have an animation that runs at a satisfactory speed with minimal time lag and resource wastage.
+ \item Research SPH and popular alternative methods of fluid simulation.
+ \item Develop a simulation which solves the Navier Stokes Equations and therefore can be classed as a fluid.
+ \item Have an animation that runs with minimal lag and resource wastage.
+ \item Add window resizing, mouse forces and sliders for user interaction.
+ \item Ensure the simulation can respond to user interaction.
 \end{itemize}
 \subsection{Skills}
-\vfill
-%Explore a topic not taught at A levels, beyond comfort zone, etc, etc
-%Learn a new programming langauge
-%Learn to typeset in LaTeX, write an official paper.
-%Useful at university
+ \begin{itemize}
+  \item Read and understand academic publishings and research papers in a Mathematics and/or Computer Science background.
+  \item Be able to take key information and synthesize it to create my own model.
+  \item Typeset my written work in LaTeX, a document formatting tool.
+  \item Learn to use a new programming language, C++.
+  \item Learn to add interactive elements to projects in C++ using SFML and ImGui.
+  \item Test and debug code in C++.
+  \item Manage my source code using version control software, Git/Hub.
+  \item Manage my time and changes in timescales.
+ \end{itemize}
+ \clearpage
 \end{document}

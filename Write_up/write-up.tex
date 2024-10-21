@@ -19,6 +19,8 @@
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage[toc,page]{appendix}
 \graphicspath{ {./Media} }
 \pgfplotsset{width=7cm, compat=1.9}
 \newlist{worddefs}{description}{1}
@@ -47,11 +49,20 @@ stringstyle=\color{mauve}, breaklines=true, breakatwhitespace=true, tabsize=3 }
 \par\noindent\rule{\textwidth}{0.3pt}
 
 \begin{abstract}
-\noindent \textit{Realistic simulation of fluids is an important tool with a wide variety of applications such as within the Aerospace industry to model fluid based phenomena of spacecraft parts and within the computer games industry for authentic graphics. In this paper, I explore a method for simulating fluids known as Smoothed Particle Hydrodynamics (SPH) in order to better understand the mathematical theory behind Computational Fluid Dynamic methods and their implementation in an appropriate programming language, C++.}
+\noindent \textit{This paper covers a method of computational fluid dynamics known as Smoothed Particle Hydrodynamics. Within the introduction, the paper presents the motivations for this project, a brief introduction to SPH and outlines the success crtieria for the artefact. In the research review, the paper provides a history of the SPH techniques as well as alternative CFD approaches considered in industrial applications such as Aerospace. The theoretical model outlines and elaborates on a mathematical brief for each section of SPH and Development shows the implementation of each section of the theoretical model in C++. Development also outlines the added interactive elements using SFML and ImGui. Finally, the evaluation measures the success of the overall project to the criteria outlined within the introduction.}
+
+%Realistic simulation of fluids is an important tool with a wide variety of applications such as within the Aerospace industry to model fluid based phenomena of spacecraft parts and within the computer games industry for authentic graphics. In this paper, I explore a method for simulating fluids known as Smoothed Particle Hydrodynamics (SPH) in order to better understand the mathematical theory behind Computational Fluid Dynamic methods and their implementation in an appropriate programming language, C++
 %not the way to do an abstract, no intro just state what you cover in each section
 \end{abstract}
 
 \par\noindent\rule{\textwidth}{0.3pt}
+\begin{figure}[h]
+\centering
+ \includegraphics[width=0.5\textwidth]{mouse_drag.png} \par
+ Final interactive SPH implementation.
+\end{figure}
+
+\newpage
 \tableofcontents
 \newpage
 \begin{multicols}{2}
@@ -70,5 +81,7 @@ stringstyle=\color{mauve}, breaklines=true, breakatwhitespace=true, tabsize=3 }
 \nocite{*}
 \bibliography{bibfile.bib}
 \end{multicols}
+\pagebreak
+\subfile{appendix.tex}
 \bibliographystyle{IEEEtran}
 \end{document}

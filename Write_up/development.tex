@@ -1,6 +1,6 @@
  \documentclass[write-up.tex]{subfiles}
  \begin{document}
-\section{Development and Testing}
+\section{Development}
 %Talk about how the equation for the smoothing kernel changed to remove 15/(pi h^6) cuz values were too small, redo volume and derivatives as well as do some tweaking to find optimum values.
 \subsection{Boilerplate code}
 
@@ -58,7 +58,7 @@ struct particle{
 };
 \end{lstlisting}
 
-We initialize a dynamic array of these particles and place them in an orderly fashion at the start of the simulation, as well as set their colour to cyan.
+We initialize a dynamic array of these particles and place them in an orderly fashion at the start of the simulation, as well as set their colour to cyan for now. Refer to Figure \ref{fig:cyan} in Appendix \ref{appendix:a}.
 
 \begin{lstlisting}
 const int particle_num = 1600;
@@ -78,8 +78,6 @@ void placeParticles(){
 }
 
 \end{lstlisting}
-
-\includegraphics[width=15cm, height=15cm]{more_still_particles_19-05-24}
 
 \subsection{Simulation loop}
 In order to calculate new positions of particles, we need to loop over them every step of the simulation to calculate its new position vector using its current velocity and acceleration vectors and multiplying by $dt$, our change in time per simulation step and then draw them. We can begin updating these by implementing gravity first.
@@ -101,12 +99,13 @@ for (int i = 0; i < particle_num; i++){
     particles[i].droplet
     .setPosition(particles[i]
     .position.x-particle_radius,
-    particles[i].position.y-particle_radius);
+    particles[i].position.y
+    -particle_radius);
 
     //Draw particles
     window.draw(particles[i].droplet);
 \end{lstlisting}
-This \href{https://youtube.com/shorts/FSuH_Cs1Qh4?feature=share}{video} shows the implementation of gravity but with no simulation border. This can be implmented with ease in the following manner:
+Appendix \ref{appendix:a} Figure \ref{fig:nograv} (\href{https://youtube.com/shorts/FSuH_Cs1Qh4?feature=share}{video}) shows the implementation of gravity but with no simulation border. This can be implmented with ease in the following manner:
 
 \begin{lstlisting}
 void resolveCollisions(int i, sf::Vector2u window_size){
@@ -121,7 +120,7 @@ void resolveCollisions(int i, sf::Vector2u window_size){
 }
 \end{lstlisting}
 
-I've also implemented a collision damping factor here to simulate the loss the energy upon collision with the simulation border. We now see that we can also successfully interact with the simulation by resizing our window, hitting one of the sucess criteria for this project. The video can be watched \href{https://youtube.com/shorts/wO0xUBSKVck?feature=share}{here}.
+I've also implemented a collision damping factor here to simulate the loss the energy upon collision with the simulation border. We now see that we can also successfully interact with the simulation by resizing our window, hitting one of the sucess criteria for this project. Refer to Appendix \ref{appendix:a} Figure \ref{fig:grav} (\href{https://youtube.com/shorts/wO0xUBSKVck?feature=share}{video}).
 \subsection{Predicted Position Optimisation}
 
 The predicted position of the particles, which will be used throughout the development, need to be calculated first. This is done quite easily in this manner:
@@ -197,7 +196,7 @@ float densityToPressure(int j){
 }
 \end{lstlisting}
 
-Then, in order to apply Newton's 3rd law, the index of the 2 particles which are being computing is taken and the average of their pseudo-pressures is returned:
+Then, in order to apply Newton's 3rd law, the index of the 2 particles which are being computed is taken and the average of their pseudo-pressures is returned:
 
 \begin{lstlisting}
  float sharedPressure(int i, int j){
@@ -304,7 +303,37 @@ In terms of the visuals of the project, cyan particles were being rendered earli
     (sf::Color(r, g, b));
 }
 \end{lstlisting}
-This will be run in the simulation loop after the velocities have been calculated for all particles in that frame. The intention behind this is to be able to better explain densities by visualising them, as well as evaluate any anomalies within the simulation.
+This will be run in the simulation loop after the velocities have been calculated for all particles in that frame. Finally, using SFML's in-built support for mouse features, I have coded a mouse force function as shown below. The program adds the appropriate acceleration within the main simulation loop in the next section.
+
+\begin{lstlisting}
+sf::Vector2f interactiveForce(sf::Vector2i position, int i, float repulsive){
+    sf::Vector2f force;
+    float dst = (particles[i].position.x - position.x) * (particles[i].position.x - position.x) + (particles[i].position.y - position.y) * (particles[i].position.y - position.y);
+    if (dst<=10000){
+        force += (((sf::Vector2f)position) - particles[i].predicted_position) * (100-sqrt(dst))/4.f * repulsive;
+    }
+    return force;
+}
+\end{lstlisting}
+The program looks for a left or right click within the events loop.
+\begin{lstlisting}
+if (event.type == sf::Event::MouseButtonPressed){
+    interactive = true;
+    //Determine whether it is an attractive or repulsive force
+    if (event.mouseButton.button == sf::Mouse::Left){
+        repulsive = 1.f;
+    }
+    else{
+        repulsive = -1.f;
+    }
+}
+//Stop the interactive forces is the mouse button is released
+if (event.type == sf::Event::MouseButtonReleased){
+    interactive = false;
+}
+\end{lstlisting}
+
+The intention behind this is to be able to better explain fluids moving down the pressre gradient by visualising them, as well as evaluate any anomalies within the simulation.
 \subsection{Updating Simulation loop}
 Finally, we can accumulate update our simulation loop by putting together everything within our development so far. This is the updated simulation loop:
 
@@ -322,6 +351,10 @@ Finally, we can accumulate update our simulation loop by putting together everyt
     particles[i].local_pressure = densityToPressure(i);
     //Calculate pressure forces and acceleration
     sf::Vector2f pressure_force = calculatePressureForce(i);
+    // Add the mouse forces
+    if (interactive){
+        pressure_force += interactiveForce(position, i, repulsive);
+    }
     sf::Vector2f pressure_acceleration;
     pressure_acceleration.x = pressure_force.x/particles[i].local_density;
     pressure_acceleration.y = pressure_force.y/particles[i].local_density;
@@ -343,6 +376,9 @@ Finally, we can accumulate update our simulation loop by putting together everyt
     window.draw(particles[i].droplet);
 }
 \end{lstlisting}
+\pagebreak
 \subsection{Final Product}
+The simulation clearly solves each section of the Navier-Stokes equation through SPH. Figure \ref{fig:pressure_grad} in Appendix \ref{appendix:a} shows the fluid moving down the pressure gradient from an area of high pressure at the start of the simulation, to areas of low pressure as the simulation border is extended. By sucessfully attempting to move down this pressure gradient, the fluid constantly attempts to achieve constant density and therefore incompressibility. This is visible in Figure \ref{fig:constant_density} where the simulation eventually reaches a stable state with particles having no/minimal velocities (shown by their blue colour) and arranging themselves in an orderly manner. Viscosity is harder to show but as the particles move from high to low pressure, red particles with unusually high velocities bounce back from the border and match the velocities of the particles around them, turning green and eventually blue as seen in Figure \ref{fig:viscosity}. This also helps the fluid reach a constant density throughout the simulation space.
 
+As for interactivity, the window resizing has worked sucessfully since the start of this project and can be noticed throughout development. Figure \ref{fig:sliders} in Appendix \ref{appendix:a} shows the sliders on screen which control different aspects of the simulation as discussed, available for the user to control the behaviour of the fluid. The ultimate test of interactivity is the mouse forces, which can be seen in Figure \ref{fig:mouse_forces}. Attractive and repulsive forces are working with left and right click respectively with dragging. The particles around them adjust for change in density appropriately.
 \end{document}

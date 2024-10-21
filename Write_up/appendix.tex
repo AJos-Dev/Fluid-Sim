@@ -1,4 +1,9 @@
-//"g++ main.cpp -o fluid_sim -lsfml-graphics -lsfml-window -lsfml-system -fopenmp -Ofast" to compile in terminal
+ \documentclass[write-up.tex]{subfiles}
+\begin{document}
+\begin{appendices}
+
+\section{C++ code}
+\begin{lstlisting}
 #include <imgui-SFML.h>
 #include <SFML/Window/Mouse.hpp>
 #include <imgui.h>
@@ -41,7 +46,7 @@ vector<particle> particles(particle_num);
 void placeParticles(){
     int particlesPerRow = sqrt(particle_num);
     int particlesPerColumn = (particle_num - 1)/particlesPerRow + 1;
-    int spacing = 2.5*particle_radius; 
+    int spacing = 2.5*particle_radius;
     for (int i = 0; i < particle_num; i++){
         particles[i].position.x = (i % particlesPerRow + particlesPerRow / 2.5f +0.5f) * spacing;
         particles[i].position.y = (i / particlesPerRow + particlesPerColumn / 2.5f +0.5f) * spacing;
@@ -59,7 +64,7 @@ void predictPositions(int i){
 
 float smoothingKernel(double dst){
     float volume = pi * (float)(pow(smoothing_radius, 4.0)/2);
-    if (dst >=smoothing_radius){    
+    if (dst >=smoothing_radius){
         return 0.f;
     }
     float value = (float)pow(smoothing_radius - dst, 3);
@@ -76,7 +81,7 @@ float calculateDensity(int i){
         float dst = sqrt((particles[j].predicted_position.x - particles[i].predicted_position.x) * (particles[j].predicted_position.x - particles[i].predicted_position.x)  + (particles[j].predicted_position.y - particles[i].predicted_position.y) * (particles[j].predicted_position.y - particles[i].predicted_position.y));
         float influence = smoothingKernel(dst);
 
-        density += particle_mass * influence; 
+        density += particle_mass * influence;
     }
     return density;
 }
@@ -106,14 +111,14 @@ sf::Vector2f calculatePressureForce(int i){
         }
         else{
             x_offset = particles[j].predicted_position.x - particles[i].predicted_position.x;
-            y_offset = particles[j].predicted_position.y - particles[i].predicted_position.y; 
+            y_offset = particles[j].predicted_position.y - particles[i].predicted_position.y;
         }
         double dst = sqrt(abs(x_offset * x_offset + y_offset * y_offset));
         float gradient = smoothingKernelDerivative(dst);
         float x_dir = x_offset/dst;
         float y_dir = y_offset/dst;
         // Newton's 3rd law implementation below
-        float shared_pressure = sharedPressure(i, j); 
+        float shared_pressure = sharedPressure(i, j);
         pressure_force.x += shared_pressure * gradient * particle_mass/particles[j].local_density * x_dir;
         pressure_force.y += shared_pressure * gradient * particle_mass/particles[j].local_density * y_dir;
     }
@@ -170,7 +175,7 @@ int main()
     window.setFramerateLimit(framerate);
     sf::View view = window.getDefaultView();
     sf::Vector2u window_size = window.getSize();
-    placeParticles();   
+    placeParticles();
     ImGui::SFML::Init(window);
     sf::Vector2i position;
     float repulsive = 1;
@@ -195,7 +200,7 @@ int main()
                 else{
                     repulsive = -1.f;
                 }
-                
+
             }
             if (event.type == sf::Event::MouseButtonReleased){
                 interactive = false;
@@ -204,8 +209,8 @@ int main()
         sf::Vector2u window_size = window.getSize();
         ImGui::SFML::Update(window, deltaClock.restart());
         window.clear();
-        
-        //ImGui Menu 
+
+        //ImGui Menu
         ImGui::Begin("Menu");
         ImGui::SliderInt("Particle Num", &particle_num, 1, 1600);
         ImGui::SliderFloat("Particle Mass", &particle_mass, 10.f, 100.f);
@@ -218,7 +223,7 @@ int main()
         position =  sf::Mouse::getPosition(window);
         for (int i = 0; i < particle_num; i++){
             resolveCollisions(i, window_size);
-            //gravity step  
+            //gravity step
             resolveGravity(i);
             //Predict next positions
             predictPositions(i);
@@ -232,17 +237,17 @@ int main()
             if (interactive){
                 pressure_force += interactiveForce(position, i, repulsive);
             }
-            sf::Vector2f pressure_acceleration; 
+            sf::Vector2f pressure_acceleration;
             pressure_acceleration.x = pressure_force.x/particles[i].local_density;
             pressure_acceleration.y = pressure_force.y/particles[i].local_density;
             //Calculate acceleration due to viscosity
-            //pressure_acceleration += calculateViscosityAcceleration(i);
+            pressure_acceleration += calculateViscosityAcceleration(i);
             particles[i].velocity.x += pressure_acceleration.x * dt;
             particles[i].velocity.y += pressure_acceleration.y * dt;
             //resolve colour
             float vel = sqrt(particles[i].velocity.x * particles[i].velocity.x + particles[i].velocity.y * particles[i].velocity.y);
             resolveColour(i, vel);// add at the end
-            //calculate particle positions with radius offset 
+            //calculate particle positions with radius offset
             particles[i].position.x += particles[i].velocity.x * dt;
             particles[i].position.y += particles[i].velocity.y * dt;
             //set particle position on screen
@@ -258,3 +263,91 @@ int main()
 
     return 0;
 }
+\end{lstlisting}
+
+\pagebreak
+
+\section{Media}
+\label{appendix:a}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{more_still_particles_19-05-24.png}
+\caption{Cyan particles rendered on screen.}
+\label{fig:cyan}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.3\textwidth]{no_collision_f1.png}
+\includegraphics[width = 0.3\textwidth]{no_collision_f2.png}
+\includegraphics[width = 0.3\textwidth]{no_collision_f3.png}
+\caption{Gravity with no collision with screen border.}
+\label{fig:nograv}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.45\textwidth]{collision_f1.png}
+\includegraphics[width = 0.45\textwidth]{collision_f2.png}
+\includegraphics[width = 0.45\textwidth]{collision_f3.png}
+\includegraphics[width = 0.45\textwidth]{collision_f4.png}
+\includegraphics[width = 0.45\textwidth]{collision_f5.png}
+\caption{Gravity with collision and window resizing.}
+\label{fig:grav}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.4\textwidth]{high_pressure.png}
+\includegraphics[width = 0.4\textwidth]{mid_pressure.png}
+\includegraphics[width = 0.75\textwidth]{low_pressure.png}
+\caption{Fluid particles moving down the pressure gradient.}
+\label{fig:pressure_grad}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.75\textwidth]{even_lower_pressure.png}
+\caption{Fluid particles reaching a constant density in a stable state.}
+\label{fig:constant_density}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.9\textwidth]{greenish_visco.png}
+\caption{Red particles with high velocities becoming green at the edge, displaying viscosity}
+\label{fig:viscosity}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{sliders.png}
+\caption{ImGui sliders on screen.}
+\label{fig:sliders}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{attractive.png}
+\includegraphics[width=0.4\textwidth]{repulsive.png}
+\includegraphics[width=0.75\textwidth]{mouse_drag.png}
+\caption{Attractive and repulsive mouse forces with mouse drag effect.}
+\label{fig:mouse_forces}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{heavy_gas.png}
+\caption{Fluid with gravity behaving like a boiling liquid or heavy gas.}
+\label{fig:heavy_gas}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{jagged.png}
+\caption{Fluid with gravity giving an unsmooth surface.}
+\label{fig:jagged}
+\end{figure}
+
+\end{appendices}
+\end{document}
