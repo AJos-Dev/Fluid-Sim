@@ -1,10 +1,9 @@
  \documentclass[write-up.tex]{subfiles}
  \begin{document}
 \section{Development}
-%Talk about how the equation for the smoothing kernel changed to remove 15/(pi h^6) cuz values were too small, redo volume and derivatives as well as do some tweaking to find optimum values.
 \subsection{Boilerplate code}
 
-The beginning of my implementation involved the boilerplate minimal code required for my graphics library SFML to be setup as well as including key libraries I will need throughout the project.
+The beginning of the implementation involved the boilerplate minimal code required for my graphics library SFML to be setup as well as including key libraries which will be needed throughout the project.
 \begin{lstlisting}
 
 #include <SFML/System/Vector2.hpp>
@@ -45,7 +44,7 @@ int main()
 \end{lstlisting}
 
 \subsection{Particle initialization}
-We can begin adding particles using instances of a Particle struct which stores the information each particle needs. This includes position and velocity vectors, the circular shape, local densities and pressures and their predicted position.
+Using instances of a Particle struct, which stores the information each particle needs, particles can start being added. This includes position and velocity vectors, the circular shape, local densities and pressures and their predicted position.
 
 \begin{lstlisting}
 struct particle{
@@ -58,7 +57,7 @@ struct particle{
 };
 \end{lstlisting}
 
-We initialize a dynamic array of these particles and place them in an orderly fashion at the start of the simulation, as well as set their colour to cyan for now. Refer to Figure \ref{fig:cyan} in Appendix \ref{appendix:a}.
+A dynamic array of these particles is initialized and placed in an orderly fashion at the start of the simulation. Their colour is also set to cyan for now. Refer to Figure \ref{fig:cyan} in Appendix \ref{appendix:a}.
 
 \begin{lstlisting}
 const int particle_num = 1600;
@@ -80,7 +79,7 @@ void placeParticles(){
 \end{lstlisting}
 
 \subsection{Simulation loop}
-In order to calculate new positions of particles, we need to loop over them every step of the simulation to calculate its new position vector using its current velocity and acceleration vectors and multiplying by $dt$, our change in time per simulation step and then draw them. We can begin updating these by implementing gravity first.
+In order to calculate new positions of particles, they must be iterated over every step of the simulation to calculate new positions using current velocity and acceleration vectors and multiplying them by $dt$, the change in time per simulation step, and finally drawn to screen. These vectors can be updated by implementing gravity first.
 \begin{lstlisting}
 const float gravity = 9.81f;
 const float dt = 1.f/60.f;
@@ -120,7 +119,7 @@ void resolveCollisions(int i, sf::Vector2u window_size){
 }
 \end{lstlisting}
 
-I've also implemented a collision damping factor here to simulate the loss the energy upon collision with the simulation border. We now see that we can also successfully interact with the simulation by resizing our window, hitting one of the sucess criteria for this project. Refer to Appendix \ref{appendix:a} Figure \ref{fig:grav} (\href{https://youtube.com/shorts/wO0xUBSKVck?feature=share}{video}).
+A collision damping factor has been implemented here as well to simulate the loss the energy upon collision with the simulation border. The user can also successfully interact with the simulation by resizing the window, hitting one of the sucess criteria for this project. Refer to Appendix \ref{appendix:a} Figure \ref{fig:grav} (\href{https://youtube.com/shorts/wO0xUBSKVck?feature=share}{video}).
 \subsection{Predicted Position Optimisation}
 
 The predicted position of the particles, which will be used throughout the development, need to be calculated first. This is done quite easily in this manner:
@@ -136,7 +135,7 @@ The function simply predicts the position of the particle depending on the curre
 
 \subsection{Smoothing Kernel and derivative}
 
-As per the theoretical model, my preferred choice of smoothing kernel is the customised version of $W_{\text{spiky}}(r, h)$, allowing for large repulsion forces at small distances and less computationally strenuous powers. In C++, this looks like the following:
+As per the theoretical model, the preferred choice of smoothing kernel is the customised version of $W_{\text{spiky}}(r, h)$, allowing for large repulsion forces at small distances and less computationally strenuous powers. In C++, this looks like the following:
 
 \begin{lstlisting}
 float smoothingKernel(double dst){
@@ -149,7 +148,7 @@ float smoothingKernel(double dst){
 }
 \end{lstlisting}
 
-Notice how we return 0 if the distance is further than the smoothing radius, this saves time as unnecessary values are not computed. The influence value is also divided by the volume of the function, giving us similar influence values regardless of the smoothing radius.
+Notice how ``0'' is returned if the distance is further than the smoothing radius, this saves time as unnecessary values are not computed. The influence value is also divided by the volume of the function, giving similar influence values regardless of the smoothing radius.
 
 Below is the implementation of the smoothing kernel derivative used for optimisation discussed in the theoretical model.
 
@@ -162,15 +161,15 @@ float smoothingKernelDerivative(double dst){
 \end{lstlisting}
 
 \subsection{Density Calculations}
-Calculating the local densities for each point requires us to use the SPH Interpolation equation, $A_s(r) = \sum_{j} m_j \frac{A_j}{\rho_j}W(r-r_j, h)$ \cite{muller}. Interestingly, if we want to calculate the density at a certian point, substituting for $\rho$ gives us:
+Calculating the local densities for each point requires us to use the SPH Interpolation equation, $A_s(r) = \sum_{j} m_j \frac{A_j}{\rho_j}W(r-r_j, h)$ \cite{muller}. Interestingly, to calculate the density at a certian point, substituting for $\rho$ gives us:
 
 \begin{center}
  $ \rho_s(r) = \sum_{j} m_j \frac{\rho_j}{\rho_j}W(r-r_j, h),
  \rho_s(r) = \sum_{j} m_j W(r-r_j, h).$
 \end{center}
- Where the densities cancel out, giving us a method of calculating the local density without being dependant on it.
+ Where the densities cancel out, giving a method of calculating the local density without being dependent on it.
 
-\noindent Coding this in C++ gives us:
+Coding this in C++ gives:
 \begin{lstlisting}
 float calculateDensity(int i){
     float density = 0.f;
@@ -185,7 +184,7 @@ float calculateDensity(int i){
 \end{lstlisting}
 
 \subsection{Pressure Calculations}
-Quantifying the local density into a pressure value, per my theoretical model, would involve taking the local density and finding a pseudo-pressure value, $P_i = k(\rho_i - \rho_0)$ \cite{clavet}, and applying the gradient optimisation to turn this pseudo-pressure into pressure.
+Quantifying the local density into a pressure value, per the theoretical model, would involve taking the local density and finding a pseudo-pressure value, $P_i = k(\rho_i - \rho_0)$ \cite{clavet}, and applying the gradient optimisation to turn this pseudo-pressure into pressure.
 
 The code below is the implementation of the equation above, where $k$ is the pressure multiplier:
 \begin{lstlisting}
@@ -196,7 +195,7 @@ float densityToPressure(int j){
 }
 \end{lstlisting}
 
-Then, in order to apply Newton's 3rd law, the index of the 2 particles which are being computed is taken and the average of their pseudo-pressures is returned:
+Then, in order to apply Newton's 3rd law, the index of the two particles which are being computed is taken and the average of their pseudo-pressures is returned:
 
 \begin{lstlisting}
  float sharedPressure(int i, int j){
@@ -209,7 +208,7 @@ Then, in order to apply Newton's 3rd law, the index of the 2 particles which are
 \end{lstlisting}
 Notice how a negative pressure value is returned, this ensures pressure is a purely repulsive force which makes intuitive sense as the particles must repel each other.
 
-Finally, the pseudo-pressure is converted to a pressure force using the SPH gradient optimisation which takes into account the rate of change of this property as well as the $x$ and $y$ direction of the particle to turn the scalar pressure force into a vector. Including the nested loop, the implementation of this is below:
+Finally, the pseudo-pressure is converted to a pressure force using the SPH gradient optimisation, which takes into account the rate of change of this property and the $x$ and $y$ direction of the particle to turn the scalar pressure force into a vector. Including the nested loop, the implementation of this is below:
 
 \begin{lstlisting}
  sf::Vector2f calculatePressureForce(int i){
@@ -234,7 +233,8 @@ Finally, the pseudo-pressure is converted to a pressure force using the SPH grad
         float x_dir = x_offset/dst;
         float y_dir = y_offset/dst;
         float shared_pressure = sharedPressure(i, j);
-        pressure_force.x += shared_pressure * gradient * particle_mass/particles[j].local_density * x_dir;
+        pressure_force.x += shared_pressure * gradient * particle_mass
+        /particles[j].local_density * x_dir;
         pressure_force.y += shared_pressure * gradient * particle_mass/particles[j]
         .local_density * y_dir;
     }
@@ -254,7 +254,7 @@ pressure_acceleration.y = pressure_force.y/particles[i]
 .local_density;
 \end{lstlisting}
 \subsection{Viscosity}
-As calculating viscosity requires a weighted sum from every other particle within the smoothing radius, just like pressure, a nested loop can be used to achieve this. From my theoretical model, implementation in C++ looks like the following:
+As calculating viscosity requires a weighted sum from every other particle within the smoothing radius, just like pressure, a nested loop can be used to achieve this. From the theoretical model, implementation in C++ looks like the following:
 \begin{lstlisting}
 
 sf::Vector2f calculateViscosityAcceleration(int i){
@@ -276,9 +276,9 @@ sf::Vector2f calculateViscosityAcceleration(int i){
 
 \end{lstlisting}
 
-The acceleration caused by the viscosity within a fluid slows the particle down, this is because viscosity is caused by friction within a fluid, a force which opposes motion. This is why the acceleration casued by viscosity is not added, but rather subtracted from the overall acceleration of the particle.
+The acceleration caused by the viscosity within a fluid slows the particle down, this is because viscosity is caused by friction within a fluid, a force which opposes motion. This is why the acceleration caused by viscosity is not added, but rather subtracted from the overall acceleration of the particle.
 \subsection{Interactivity and visuals}
-One of the criterias for this project is interactivity. Using SFML, I have allowed the user to resize the window but ImGui will allow the user to use sliders and change key SPH properties discussed in this paper such as the Target density, Pressure multiplier and the smoothing radius. Additionally, I will also allow for gravity, number of particles and particle mass to also be changed to allow the user freedom and to explore different types of fluid which are possible to simulate using this technique. ImGui interactive variable initialisation code is below:
+One criterion for this project is interactivity. Using SFML, I have allowed the user to resize the window but ImGui will allow the user to use sliders and change key SPH properties discussed in this paper such as the target density, pressure multiplier and the smoothing radius. Additionally, I will also allow for gravity, number of particles and particle mass to also be changed to allow the user freedom and to explore different types of fluid which are possible to simulate using this technique. ImGui interactive variable initialisation code is below:
 
 \begin{lstlisting}
 ImGui::Begin("Menu");
@@ -292,7 +292,7 @@ ImGui::SliderInt("Framerate", &framerate, 60, 1200);
 ImGui::End();
 \end{lstlisting}
 
-In terms of the visuals of the project, cyan particles were being rendered earlier. Instead, a more aesthetically pleasing and useful algorithm to implement would be a linear interpolation colour algorithm. Simply put, the algorithm would output a colour for the particle depending on it's velocity. A larger velocity would output a more red-shifted colour whereas a slower velocity would output a blue-shifted colour. In C++, we would have:
+In terms of the visuals of the project, cyan particles were being rendered earlier. Instead, a more aesthetically pleasing and useful algorithm to implement would be a linear interpolation colour algorithm. Simply put, the algorithm would output a colour for the particle depending on it's velocity. A larger velocity would output a more red-shifted colour whereas a slower velocity would output a blue-shifted colour. In C++, this looks like:
 
 \begin{lstlisting}
  void resolveColor(int i, float vel){
@@ -303,7 +303,7 @@ In terms of the visuals of the project, cyan particles were being rendered earli
     (sf::Color(r, g, b));
 }
 \end{lstlisting}
-This will be run in the simulation loop after the velocities have been calculated for all particles in that frame. Finally, using SFML's in-built support for mouse features, I have coded a mouse force function as shown below. The program adds the appropriate acceleration within the main simulation loop in the next section.
+This will be run in the simulation loop after the velocities have been calculated for all particles in that frame. Finally, using SFML's in-built support for mouse features, a mouse force function has been coded and is shown below. The program adds the appropriate acceleration within the main simulation loop in the next section.
 
 \begin{lstlisting}
 sf::Vector2f interactiveForce(sf::Vector2i position, int i, float repulsive){
@@ -335,7 +335,7 @@ if (event.type == sf::Event::MouseButtonReleased){
 
 The intention behind this is to be able to better explain fluids moving down the pressre gradient by visualising them, as well as evaluate any anomalies within the simulation.
 \subsection{Updating Simulation loop}
-Finally, we can accumulate update our simulation loop by putting together everything within our development so far. This is the updated simulation loop:
+Finally, the simulation loop is updated by putting together everything within development so far. This is the updated simulation loop:
 
 \begin{lstlisting}
  for (int i = 0; i < particle_num; i++){
@@ -381,4 +381,6 @@ Finally, we can accumulate update our simulation loop by putting together everyt
 The simulation clearly solves each section of the Navier-Stokes equation through SPH. Figure \ref{fig:pressure_grad} in Appendix \ref{appendix:a} shows the fluid moving down the pressure gradient from an area of high pressure at the start of the simulation, to areas of low pressure as the simulation border is extended. By sucessfully attempting to move down this pressure gradient, the fluid constantly attempts to achieve constant density and therefore incompressibility. This is visible in Figure \ref{fig:constant_density} where the simulation eventually reaches a stable state with particles having no/minimal velocities (shown by their blue colour) and arranging themselves in an orderly manner. Viscosity is harder to show but as the particles move from high to low pressure, red particles with unusually high velocities bounce back from the border and match the velocities of the particles around them, turning green and eventually blue as seen in Figure \ref{fig:viscosity}. This also helps the fluid reach a constant density throughout the simulation space.
 
 As for interactivity, the window resizing has worked sucessfully since the start of this project and can be noticed throughout development. Figure \ref{fig:sliders} in Appendix \ref{appendix:a} shows the sliders on screen which control different aspects of the simulation as discussed, available for the user to control the behaviour of the fluid. The ultimate test of interactivity is the mouse forces, which can be seen in Figure \ref{fig:mouse_forces}. Attractive and repulsive forces are working with left and right click respectively with dragging. The particles around them adjust for change in density appropriately.
+
+Refer to Appendix \ref{appendix:b} for the C++ code in its entirety.
 \end{document}

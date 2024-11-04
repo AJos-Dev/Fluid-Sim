@@ -72,7 +72,7 @@ $
    A_s(r) = \sum_{j} m_j \frac{A_j}{\rho_j}W(r-r_j, h)
 $
 
-$A_s$ is the property we want to calculate,\\
+$A_s$ is the property to be calculated,\\
 $m_j$ is the mass of the particle,\\
 $A_J$ is the value of that property of particle with index $j$,\\
 $\rho_j$ is the local density, \\
@@ -82,7 +82,7 @@ $W(r-r_j, h)$ is the value of the smoothing kernel with the distance between the
 
 \subsection{SPH gradient optimisation}
 
-The simulation step updates the position vectors of the particles according to the rate of change of the properties every frame. We can calculate this rate of change by taking the derivative of our smoothing kernel with respect to r:
+The simulation step updates the position vectors of the particles according to the rate of change of the properties every frame. This rate of change can be calculated by taking the derivative of the smoothing kernel with respect to r:
 
 \begin{align*}
 W(r, h) &= (h-r)^3 \\
@@ -91,10 +91,12 @@ W(r, h) &= (h-r)^3 \\
 
 \subsection{Pressure Forces and Newton's Third Law}
 
-Clavet \textit{et al.} \cite{clavet} mention calculating a pseudo-pressure $P_i$, proportional to the difference between the local density $\rho_i$ and the current density $\rho_0$, governed by the equation $P_i = k(\rho_i - \rho_0)$, where $k$ is a constant, which will be referred to as the pressure multipler, governing the stiffness of the fluid. We then apply the SPG gradient optimisation to get a value for the pressure force. By Newton's second law, $F = ma$, we can find the acceleration of the particle and apply this to the particles within the simulation step. Furthermore, Newton's Third Law of Motion must also be applied in this context, where if a particle exerts a pressure force, it must experience an equal and opposite reaction force.
+Clavet \textit{et al.} \cite{clavet} mention calculating a pseudo-pressure $P_i$, proportional to the difference between the local density $\rho_i$ and the current density $\rho_0$, governed by the equation $P_i = k(\rho_i - \rho_0)$, where $k$ is a constant, which will be referred to as the pressure multipler, governing the stiffness of the fluid. The SPH gradient optimisation is then applied to get a value for the pressure force. By Newton's second law, $F = ma$, the acceleration of the particle can be found and can be appled to the particles within the simulation step. Furthermore, Newton's Third Law of Motion must also be applied in this context, where if a particle exerts a pressure force, it must experience an equal and opposite reaction force.
 
 \subsection{Viscosity}
-The nature of this project would lead you to assume that viscosity is calculated using the interpolation equation. However, Koschier \textit{et al.}\cite{koschier} mention there are major issues with this approach. The most significant issue is that this approach is sensitive to particle disorder. An proposed alternative which is viable for the scope of this project is to use ``one derivative using SPH and the second one using finite differences'' \cite{koschier}. Following from Sebastian Lague's implementation, the viscosity force is calculated by taking the difference in velocities, multiplying by the influence from a viscosity kernel and then multiplying by an arbitary scalar value. For my implementation, I will settle for the smoothing kernel for viscosity for simplicity instead of the suggested sharper viscosity kernel as I am cautious of overall compute time.
+The nature of this project would lead you to assume that viscosity is calculated using the interpolation equation. However, Koschier \textit{et al.}\cite{koschier} mention there are major issues with this approach. The most significant issue is that this approach is sensitive to particle disorder. An proposed alternative which is viable for the scope of this project is to use ``one derivative using SPH and the second one using finite differences'' \cite{koschier}. Following from Sebastian Lague's implementation, the viscosity force is calculated by taking the difference in velocities, multiplying by the influence from a viscosity kernel and then multiplying by an arbitary scalar value.
+
+For my implementation, I will settle for the smoothing kernel for viscosity for simplicity instead of the suggested sharper viscosity kernel. Mentioned earlier, larger powers are time consuming to compute and therefore it is more time and space efficient to apply the computed smoothing kernel influence value than to calculate values from two seperate kernels with large powers in the same loop.
 
 \subsection{Predicted Position optimisation}
 An interesting paper by B. Solenthaler and R. Pajarola \cite{solenthaler} uses the current velocities of particles to determine a predicted position and uses predicted positions in the density and pressure calculations instead of current particle positions. This Predictive-Corrective Incompressible SPH (PCISPH) model allows for greater enforcement on incompressibility whilst having low computational cost per update with a large timestep, which is useful as other methods of enforcing incompressibility rely on smaller timesteps that are computationally heavy.
